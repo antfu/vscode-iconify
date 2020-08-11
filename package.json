@@ -1,0 +1,70 @@
+{
+  "name": "iconify",
+  "displayName": "Iconify IntelliSense",
+  "description": "Intelligent Iconify previewing and searching for VS Code",
+  "publisher": "antfu",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "preview": true,
+  "engines": {
+    "vscode": "^1.47.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization",
+    "Snippets"
+  ],
+  "activationEvents": [
+    "workspaceContains:package.json",
+    "onLanguage:vue",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:handlebars",
+    "onLanguage:svelte",
+    "onLanguage:html",
+    "onLanguage:css"
+  ],
+  "keywords": [
+    "icons",
+    "iconify"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antfu/vscode-iconify"
+  },
+  "homepage": "https://github.com/antfu/vscode-iconify",
+  "bugs": "https://github.com/antfu/vscode-iconify/issues",
+  "main": "./dist/index",
+  "contributes": {
+    "snippets": [
+      {
+        "language": "javascript",
+        "path": "./declares/snippets.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs --external vscode",
+    "dev": "pnpm build -- --watch",
+    "prepare": "esno scripts/prepare.ts"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config-ts": "^0.2.14",
+    "@iconify/iconify": "^1.0.7",
+    "@iconify/json": "^1.1.204",
+    "@types/fs-extra": "^9.0.1",
+    "@types/vscode": "^1.47.0",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "eslint": "^7.6.0",
+    "esno": "^0.2.0",
+    "fs-extra": "^9.0.1",
+    "tsup": "^3.4.2",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
+  }
+}
