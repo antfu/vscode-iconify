@@ -3,7 +3,7 @@
   "displayName": "Iconify IntelliSense",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "publisher": "antfu",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "private": true,
   "preview": true,
@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/antfu/vscode-iconify",
   "bugs": "https://github.com/antfu/vscode-iconify/issues",
+  "icon": "./res/logo.png",
   "main": "./dist/index.js",
   "contributes": {
     "snippets": [
