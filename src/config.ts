@@ -2,8 +2,8 @@ import { workspace } from 'vscode'
 import { EXT_NAMESPACE } from './meta'
 
 export const config = {
-  get hideName() {
-    return this.getConfig<boolean>('hideName') ?? false
+  get inplace() {
+    return this.getConfig<boolean>('inplace') ?? false
   },
 
   // config

@@ -1,14 +1,11 @@
-import { TextDocument, languages, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemProvider, CompletionItemKind, MarkdownString } from 'vscode'
-import { SUPPORTED_LANG_IDS, REGEX_NAMESPACE } from './meta'
+import { TextDocument, languages, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext } from 'vscode'
+import { SUPPORTED_LANG_IDS, REGEX_NAMESPACE, DELIMITER } from './meta'
 import { collections } from './collections'
-import { getDataURL } from './loader'
-import { ctx } from './ctx'
+import { getIconMarkdown } from './markdown'
 
-const TRIGGER = ':'
-
-export function RegisterCompletion() {
+export function RegisterCompletion(ctx: ExtensionContext) {
   const provider: CompletionItemProvider = {
-    async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
+    provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
       const match = document.getWordRangeAtPosition(position, REGEX_NAMESPACE)
       if (!match)
         return null
@@ -20,16 +17,15 @@ export function RegisterCompletion() {
 
       return info.icons
         .map((i) => {
-          const item = new CompletionItem(i, CompletionItemKind.Enum)
+          const item = new CompletionItem(i, CompletionItemKind.Color)
           item.detail = `${id}:${i}`
           return item
         })
     },
     async resolveCompletionItem(item: CompletionItem) {
-      const dataURL = await getDataURL(item.detail!)
       return {
         ...item,
-        documentation: new MarkdownString(`![](${dataURL})`),
+        documentation: await getIconMarkdown(ctx, item.detail!),
       }
     },
   }
@@ -38,7 +34,7 @@ export function RegisterCompletion() {
     languages.registerCompletionItemProvider(
       SUPPORTED_LANG_IDS,
       provider,
-      TRIGGER,
+      DELIMITER,
     ),
   )
 }

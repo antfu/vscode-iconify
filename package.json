@@ -16,7 +16,6 @@
     "Snippets"
   ],
   "activationEvents": [
-    "*",
     "workspaceContains:package.json",
     "onLanguage:vue",
     "onLanguage:javascript",
@@ -38,7 +37,7 @@
   },
   "homepage": "https://github.com/antfu/vscode-iconify",
   "bugs": "https://github.com/antfu/vscode-iconify/issues",
-  "main": "./dist/index",
+  "main": "./dist/index.js",
   "contributes": {
     "snippets": [
       {
@@ -54,10 +53,10 @@
       "type": "object",
       "title": "%extname%",
       "properties": {
-        "iconify.hideName": {
+        "iconify.inplace": {
           "type": "boolean",
-          "default": false,
-          "description": "Hide icon name, show the icon only."
+          "default": true,
+          "description": "Use icon to replace the icon name."
         }
       }
     }
@@ -65,7 +64,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs --external vscode",
     "dev": "pnpm build -- --watch",
-    "prepare": "esno scripts/prepare.ts"
+    "prepare": "esno scripts/prepare.ts",
+    "release": "esno scripts/publish.ts"
   },
   "devDependencies": {
     "@antfu/eslint-config-ts": "^0.3.2",

@@ -1,0 +1,6 @@
+.github/**
+.vscode/**
+.vscode-test/**
+node_modules
+!node_modules/**/*.js
+!node_modules/**/*.json

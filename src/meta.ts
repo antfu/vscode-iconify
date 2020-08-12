@@ -16,5 +16,7 @@ export const SUPPORTED_LANG_IDS = [
   'pug',
 ]
 
+export const DELIMITER = ':'
+
 export const REGEX_NAMESPACE = new RegExp(`[^\\w\\d](?:${collectionIds.join('|')}):`)
 export const REGEX_FULL = new RegExp(`[^\\w\\d]((?:${collectionIds.join('|')}):[\\w-]+)`, 'g')
