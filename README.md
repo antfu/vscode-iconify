@@ -30,3 +30,25 @@
   <img src="https://github.com/antfu/vscode-iconify/blob/master/screenshots/preview-1.png" alt='preview'>
 </p>
 
+
+### Features
+
+- Inline display cosponding icons
+- Auto completions for iconsets
+- Hover
+- Snippets
+
+### TODO
+
+- Fix viewbox for some iconsets
+- Resize icons with font
+- Config/command to toggle display
+- Dark/Light theme
+- Icons for auto-comletions (Not sure if it's possible)
+- Config to enable/disable some collections
+- Config for delimiters
+
+
+## License
+
+MIT License © 2020 [Anthony Fu](https://github.com/antfu)
