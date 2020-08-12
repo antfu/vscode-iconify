@@ -37,17 +37,17 @@
   },
   "homepage": "https://github.com/antfu/vscode-iconify",
   "bugs": "https://github.com/antfu/vscode-iconify/issues",
-  "icon": "./res/logo.png",
-  "main": "./dist/index.js",
+  "icon": "res/logo.png",
+  "main": "dist/index.js",
   "contributes": {
     "snippets": [
       {
         "language": "html",
-        "path": "./snippets/html.json"
+        "path": "snippets/html.json"
       },
       {
         "language": "vue",
-        "path": "./snippets/html.json"
+        "path": "snippets/html.json"
       }
     ],
     "configuration": {
