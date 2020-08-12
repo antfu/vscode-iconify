@@ -16,6 +16,7 @@
     "Snippets"
   ],
   "activationEvents": [
+    "*",
     "workspaceContains:package.json",
     "onLanguage:vue",
     "onLanguage:javascript",
@@ -41,10 +42,25 @@
   "contributes": {
     "snippets": [
       {
-        "language": "javascript",
-        "path": "./declares/snippets.json"
+        "language": "html",
+        "path": "./snippets/html.json"
+      },
+      {
+        "language": "vue",
+        "path": "./snippets/html.json"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "%extname%",
+      "properties": {
+        "iconify.hideName": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide icon name, show the icon only."
+        }
+      }
+    }
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs --external vscode",
@@ -52,9 +68,9 @@
     "prepare": "esno scripts/prepare.ts"
   },
   "devDependencies": {
-    "@antfu/eslint-config-ts": "^0.2.14",
+    "@antfu/eslint-config-ts": "^0.3.2",
     "@iconify/iconify": "^1.0.7",
-    "@iconify/json": "^1.1.204",
+    "@iconify/json": "^1.1.205",
     "@types/fs-extra": "^9.0.1",
     "@types/vscode": "^1.47.0",
     "@typescript-eslint/eslint-plugin": "^3.9.0",

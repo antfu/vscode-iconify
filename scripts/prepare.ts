@@ -20,11 +20,13 @@ async function prepareJSON() {
     const icons = Object.keys(setData.icons)
     const categories = setData.categories
     const meta = { ...info, icons, categories }
+    delete meta.samples
+    delete meta.categories
     collectionsMeta.push(meta)
   }
 
   await fs.ensureDir(out)
-  await fs.writeJSON(path.join(out, 'collections.json'), collectionsMeta)
+  await fs.writeFile(path.join(out, 'collections.ts'), `export default \`${JSON.stringify(collectionsMeta)}\``, 'utf-8')
 }
 
 async function prepare() {

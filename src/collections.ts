@@ -1,4 +1,4 @@
-import raw from './generated/collections.json'
+import raw from './generated/collections'
 
 export interface IconsetMeta {
   id: string
@@ -9,6 +9,6 @@ export interface IconsetMeta {
   width: number
 }
 
-export const collections: IconsetMeta[] = raw as any
+export const collections: IconsetMeta[] = JSON.parse(raw)
 
 export const collectionIds = collections.map(i => i.id)

@@ -12,14 +12,18 @@ export function RegisterAnnotations() {
     },
   })
 
+  const IconOnlyDecoration = window.createTextEditorDecorationType({
+    textDecoration: 'none; display: none;', // a hack to inject custom style
+  })
+
   async function updateDecorations(editor: TextEditor) {
     if (!editor)
       return
 
     const text = editor.document.getText()
-    const decorations: Promise<DecorationOptions>[] = []
 
     let match
+    const keys: [Range, string][] = []
 
     // eslint-disable-next-line no-cond-assign
     while ((match = REGEX_FULL.exec(text))) {
@@ -29,20 +33,24 @@ export function RegisterAnnotations() {
 
       const startPos = editor.document.positionAt(match.index + 1)
       const endPos = editor.document.positionAt(match.index + key.length + 1)
+      keys.push([new Range(startPos, endPos), key])
+    }
 
-      decorations.push(
-        (async() => ({
-          range: new Range(startPos, endPos),
+    const decorations = await Promise.all(
+      keys.map(
+        async([range, key]): Promise<DecorationOptions> => ({
+          range,
           renderOptions: {
             before: {
               contentIconPath: Uri.parse(await getDataURL(key)),
             },
           },
-        }))(),
-      )
-    }
+        }),
+      ),
+    )
 
-    editor.setDecorations(BasicDecoration, await Promise.all(decorations))
+    editor.setDecorations(BasicDecoration, decorations)
+    editor.setDecorations(IconOnlyDecoration, keys.map(([range]) => range))
   }
 
   let timeout: NodeJS.Timer | undefined
@@ -62,5 +70,15 @@ export function RegisterAnnotations() {
   workspace.onDidChangeTextDocument((event) => {
     if (window.activeTextEditor && event.document === window.activeTextEditor.document)
       triggerUpdateDecorations(window.activeTextEditor)
+  }, null, ctx.subscriptions)
+
+  workspace.onDidChangeConfiguration(() => {
+    if (window.activeTextEditor)
+      triggerUpdateDecorations(window.activeTextEditor)
+  }, null, ctx.subscriptions)
+
+  window.onDidChangeVisibleTextEditors((editors) => {
+    if (editors[0])
+      triggerUpdateDecorations(editors[0])
   }, null, ctx.subscriptions)
 }
