@@ -1,8 +1,8 @@
-import { window, TextEditor, DecorationOptions, Range, Uri, DecorationRangeBehavior, ExtensionContext, workspace } from 'vscode'
+import { window, TextEditor, DecorationOptions, Range, Uri, ExtensionContext, workspace } from 'vscode'
 import { REGEX_FULL } from './meta'
-import { getDataURL } from './loader'
+import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'
-import { config } from './config'
+import { config, onConfigUpdated } from './config'
 import { getIconMarkdown } from './markdown'
 
 export interface DecorationMatch extends DecorationOptions {
@@ -10,14 +10,9 @@ export interface DecorationMatch extends DecorationOptions {
 }
 
 export function RegisterAnnotations(ctx: ExtensionContext) {
-  const BasicDecoration = window.createTextEditorDecorationType({
-    rangeBehavior: DecorationRangeBehavior.OpenOpen,
-    before: {
-      margin: '-10px 2px; transform: translate(-2px, 3px);',
-      width: '1.1em',
-    },
+  const InlineIconDecoration = window.createTextEditorDecorationType({
+    textDecoration: 'none; opacity: 0.6 !important;',
   })
-
   const HideTextDecoration = window.createTextEditorDecorationType({
     textDecoration: 'none; display: none;', // a hack to inject custom style
   })
@@ -28,6 +23,12 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
   async function updateDecorations() {
     if (!editor)
       return
+
+    if (!config.annonations) {
+      editor.setDecorations(InlineIconDecoration, [])
+      editor.setDecorations(HideTextDecoration, [])
+      return
+    }
 
     const text = editor.document.getText()
     let match
@@ -49,15 +50,19 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
       await Promise.all(
         keys.map(
           async([range, key]) => {
-            const dataurl = await getDataURL(ctx, key)
-            if (!dataurl)
+            const info = await getIconInfo(ctx, key)
+            if (!info)
               return undefined
+
+            const dataurl = await getDataURL(ctx, info, config.fontSize * 1.2)
 
             const item: DecorationMatch = {
               range,
               renderOptions: {
                 before: {
                   contentIconPath: Uri.parse(dataurl),
+                  margin: `-${config.fontSize}px 2px; transform: translate(-2px, 3px);`,
+                  width: `${config.fontSize * info.ratio * 1.1}px`,
                 },
               },
               hoverMessage: await getIconMarkdown(ctx, key),
@@ -75,7 +80,14 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
   function refreshDecorations() {
     if (!editor)
       return
-    editor.setDecorations(BasicDecoration, decorations)
+
+    if (!config.annonations) {
+      editor.setDecorations(InlineIconDecoration, [])
+      editor.setDecorations(HideTextDecoration, [])
+      return
+    }
+
+    editor.setDecorations(InlineIconDecoration, decorations)
     if (config.inplace) {
       editor.setDecorations(
         HideTextDecoration,
@@ -106,11 +118,11 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
     }
     timeout = setTimeout(() => {
       updateDecorations()
-    }, 500)
+    }, 200)
   }
 
   window.onDidChangeActiveTextEditor((e) => {
-    triggerUpdateDecorations(editor)
+    triggerUpdateDecorations(e)
   }, null, ctx.subscriptions)
 
   workspace.onDidChangeTextDocument((event) => {
@@ -119,7 +131,8 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
   }, null, ctx.subscriptions)
 
   workspace.onDidChangeConfiguration(() => {
-    triggerUpdateDecorations(window.activeTextEditor)
+    onConfigUpdated()
+    triggerUpdateDecorations()
   }, null, ctx.subscriptions)
 
   window.onDidChangeVisibleTextEditors((editors) => {

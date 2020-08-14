@@ -17,7 +17,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
 
       return info.icons
         .map((i) => {
-          const item = new CompletionItem(i, CompletionItemKind.Color)
+          const item = new CompletionItem(i, CompletionItemKind.Text)
           item.detail = `${id}:${i}`
           return item
         })

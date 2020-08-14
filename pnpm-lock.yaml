@@ -1,4 +1,5 @@
 dependencies:
+  '@vue/reactivity': 3.0.0-rc.5
   axios: 0.19.2
 devDependencies:
   '@antfu/eslint-config-ts': 0.3.2_eslint@7.6.0+typescript@3.9.7
@@ -335,6 +336,16 @@ packages:
       node: ^8.10.0 || ^10.13.0 || >=11.10.1
     resolution:
       integrity: sha512-O1qeoGqDbu0EZUC/MZ6F1WHTIzcBVhGqDj3LhTnj65WUA548RXVxUHbYhAW9bZWfb2rnX9QsbbP5nmeJ5Z4+ng==
+  /@vue/reactivity/3.0.0-rc.5:
+    dependencies:
+      '@vue/shared': 3.0.0-rc.5
+    dev: false
+    resolution:
+      integrity: sha512-oe9C+1jtWUdYL/iNc0OPWbwgOk2rOW2uQ+exx3I6Jo6PKOmnAiPkMElalf9vRnO53rnUphVecMp8BlTJvcNgDw==
+  /@vue/shared/3.0.0-rc.5:
+    dev: false
+    resolution:
+      integrity: sha512-ZhcgGzBpp+pUzisZgQpM4ctIGgLpYjBj7/rZfbhEPxFHF/BuTV2jmhXvAl8aF9xDAejIcw85xCy92gDSwKtPag==
   /acorn-jsx/5.2.0_acorn@7.4.0:
     dependencies:
       acorn: 7.4.0
@@ -2159,6 +2170,7 @@ specifiers:
   '@types/fs-extra': ^9.0.1
   '@types/vscode': ^1.47.0
   '@typescript-eslint/eslint-plugin': ^3.9.0
+  '@vue/reactivity': ^3.0.0-rc.5
   axios: ^0.19.2
   eslint: ^7.6.0
   esno: ^0.2.0

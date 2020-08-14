@@ -40,11 +40,10 @@
 
 ### TODO
 
-- Fix viewbox for some iconsets
-- Resize icons with font
+- ~~Fix viewbox for some iconsets~~
+- ~~Resize icons with font~~
 - Config/command to toggle display
-- Dark/Light theme
-- Icons for auto-comletions (Not sure if it's possible)
+- Change Icon size for Dark/Light theme
 - Config to enable/disable some collections
 - Config for delimiters
 

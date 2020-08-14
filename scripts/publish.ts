@@ -16,7 +16,7 @@ async function publish() {
   json.main = 'index.js'
   await fs.writeJSON('./dist/package.json', json)
 
-  execSync('npm i --only=production --no-package-lock', { stdio: 'inherit', cwd: './dist' })
+  // execSync('npm i --only=production --no-package-lock', { stdio: 'inherit', cwd: './dist' })
 
   execSync('vsce publish', { stdio: 'inherit', cwd: './dist' })
 }

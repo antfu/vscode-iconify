@@ -1,4 +1,4 @@
-import type { IconifyJSON } from '@iconify/iconify'
+import type { IconifyJSON, IconifyIcon } from '@iconify/iconify'
 import axios from 'axios'
 import { ExtensionContext } from 'vscode'
 import { COLLECTION_API } from './meta'
@@ -47,16 +47,45 @@ export const LoadIconSet = UniqPromise(async(ctx: ExtensionContext, id: string) 
   return data
 })
 
-export async function getDataURL(ctx: ExtensionContext, key: string, fontSize = '1em') {
+export interface IconInfo extends IconifyIcon {
+  width: number
+  height: number
+  key: string
+  ratio: number
+}
+
+export async function getIconInfo(ctx: ExtensionContext, key: string) {
+  const [id, name] = key.split(':', 2)
+  const data = await LoadIconSet(ctx, id)
+  const icon = data?.icons?.[name] as IconInfo
+  if (!data || !icon)
+    return null
+
+  if (!icon.width)
+    icon.width = data.width || 32
+
+  if (!icon.height)
+    icon.height = data.height || 32
+
+  icon.key = key
+  icon.ratio = (data.width! / data.height!) || 1
+
+  return icon
+}
+
+export async function getDataURL(ctx: ExtensionContext, key: string, fontSize?: number): Promise<string>
+export async function getDataURL(ctx: ExtensionContext, info: IconInfo, fontSize?: number): Promise<string>
+export async function getDataURL(ctx: ExtensionContext, keyOrInfo: string|IconInfo, fontSize = 32) {
+  const key = typeof keyOrInfo === 'string' ? keyOrInfo : keyOrInfo.key
+
   if (dataURLCache[fontSize + key])
     return dataURLCache[fontSize + key]
 
-  const [id, icon] = key.split(':', 2)
-  const data = await LoadIconSet(ctx, id)
-  const path = data?.icons?.[icon]?.body
-  if (!data || !path)
+  const info = typeof keyOrInfo === 'string' ? await getIconInfo(ctx, key) : keyOrInfo
+
+  if (!info)
     return ''
 
-  dataURLCache[fontSize + key] = toDataUrl(pathToSvg(path, data.width || 32, data.height || 32, fontSize).replace(/currentColor/g, '#ddd'))
+  dataURLCache[fontSize + key] = toDataUrl(pathToSvg(info, fontSize).replace(/currentColor/g, '#ddd'))
   return dataURLCache[fontSize + key]
 }
