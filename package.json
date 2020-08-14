@@ -3,7 +3,7 @@
   "displayName": "Iconify IntelliSense",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "publisher": "antfu",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "private": true,
   "preview": true,
