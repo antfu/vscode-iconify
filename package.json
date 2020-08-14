@@ -80,12 +80,13 @@
     "@types/fs-extra": "^9.0.1",
     "@types/vscode": "^1.47.0",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@vue/reactivity": "^3.0.0-rc.5",
+    "axios": "^0.19.2",
     "eslint": "^7.6.0",
     "esno": "^0.2.0",
     "fs-extra": "^9.0.1",
+    "standard-version": "^8.0.2",
     "tsup": "^3.4.2",
-    "typescript": "^3.9.7",
-    "@vue/reactivity": "^3.0.0-rc.5",
-    "axios": "^0.19.2"
+    "typescript": "^3.9.7"
   }
 }

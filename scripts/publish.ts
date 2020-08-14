@@ -3,9 +3,18 @@ import fs from 'fs-extra'
 
 async function publish() {
   await fs.remove('./dist')
+  execSync('npx standard-version')
+
   execSync('npm run build', { stdio: 'inherit' })
 
-  const files = ['LICENSE', 'README.md', 'snippets', '.vscodeignore', 'res']
+  const files = [
+    'LICENSE',
+    'README.md',
+    'CHANGELOG.md',
+    'snippets',
+    '.vscodeignore',
+    'res',
+  ]
 
   for (const f of files)
     await fs.copy(`./${f}`, `./dist/${f}`)
