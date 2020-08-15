@@ -1,6 +1,7 @@
 import { workspace } from 'vscode'
 import { reactive, computed, ref } from '@vue/reactivity'
 import { EXT_NAMESPACE } from './meta'
+import { collectionIds } from './collections'
 
 const _configState = ref(0)
 
@@ -34,7 +35,24 @@ function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
 export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annonations: createConfigRef(`${EXT_NAMESPACE}.annonations`, true),
+  includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
+  excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
+})
+
+export const enabledCollections = computed(() => {
+  const includes = config.includes?.length ? config.includes : collectionIds
+  const excludes = config.excludes || []
+
+  return includes.filter(i => !excludes.includes(i))
+})
+
+export const REGEX_NAMESPACE = computed(() => {
+  return new RegExp(`[^\\w\\d](?:${enabledCollections.value.join('|')}):`)
+})
+
+export const REGEX_FULL = computed(() => {
+  return new RegExp(`[^\\w\\d]((?:${enabledCollections.value.join('|')}):[\\w-]+)`, 'g')
 })
 
 export function onConfigUpdated() {

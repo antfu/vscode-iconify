@@ -1,12 +1,13 @@
 import { TextDocument, languages, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext } from 'vscode'
-import { SUPPORTED_LANG_IDS, REGEX_NAMESPACE, DELIMITER } from './meta'
+import { SUPPORTED_LANG_IDS, DELIMITER } from './meta'
 import { collections } from './collections'
 import { getIconMarkdown } from './markdown'
+import { REGEX_NAMESPACE } from './config'
 
 export function RegisterCompletion(ctx: ExtensionContext) {
   const provider: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
-      const match = document.getWordRangeAtPosition(position, REGEX_NAMESPACE)
+      const match = document.getWordRangeAtPosition(position, REGEX_NAMESPACE.value)
       if (!match)
         return null
 

@@ -25,6 +25,13 @@ async function prepareJSON() {
     collectionsMeta.push(meta)
   }
 
+  const collectionsIds = collectionsMeta.map(i => i.id)
+
+  const pkg = await fs.readJSON('./package.json')
+  pkg.contributes.configuration.properties['iconify.includes'].items.enum = collectionsIds
+  pkg.contributes.configuration.properties['iconify.excludes'].items.enum = collectionsIds
+  await fs.writeJSON('./package.json', pkg, { spaces: 2 })
+
   await fs.ensureDir(out)
   await fs.writeFile(path.join(out, 'collections.ts'), `export default \`${JSON.stringify(collectionsMeta)}\``, 'utf-8')
 }

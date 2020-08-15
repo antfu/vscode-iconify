@@ -1,5 +1,3 @@
-import { collectionIds } from './collections'
-
 export const EXT_NAMESPACE = 'iconify'
 export const EXT_ID = 'antfu.iconify'
 export const EXT_NAME = 'Iconify IntelliSense'
@@ -17,6 +15,3 @@ export const SUPPORTED_LANG_IDS = [
 ]
 
 export const DELIMITER = ':'
-
-export const REGEX_NAMESPACE = new RegExp(`[^\\w\\d](?:${collectionIds.join('|')}):`)
-export const REGEX_FULL = new RegExp(`[^\\w\\d]((?:${collectionIds.join('|')}):[\\w-]+)`, 'g')

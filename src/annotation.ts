@@ -1,8 +1,8 @@
 import { window, TextEditor, DecorationOptions, Range, Uri, ExtensionContext, workspace } from 'vscode'
-import { REGEX_FULL } from './meta'
+import { REGEX_FULL, config, onConfigUpdated } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'
-import { config, onConfigUpdated } from './config'
+
 import { getIconMarkdown } from './markdown'
 
 export interface DecorationMatch extends DecorationOptions {
@@ -32,11 +32,12 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
 
     const text = editor.document.getText()
     let match
-    REGEX_FULL.lastIndex = 0
+    const regex = REGEX_FULL.value
+    regex.lastIndex = 0
     const keys: [Range, string][] = []
 
     // eslint-disable-next-line no-cond-assign
-    while ((match = REGEX_FULL.exec(text))) {
+    while ((match = regex.exec(text))) {
       const key = match[1]
       if (!key)
         continue

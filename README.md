@@ -32,8 +32,8 @@
 ### TODO
 
 - Config/command to toggle display
-- Change Icon size for Dark/Light theme
-- Config to enable/disable some collections
+- Change Icon color for Dark/Light theme
+- ✅ Config to enable/disable some collections
 - Config for delimiters
 
 
