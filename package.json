@@ -3,7 +3,7 @@
   "displayName": "Iconify IntelliSense",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "publisher": "antfu",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "private": true,
   "preview": true,
@@ -50,7 +50,7 @@
         "path": "snippets/html.json"
       }
     ],
-    "commands":[
+    "commands": [
       {
         "command": "iconify.toggle-annotations",
         "category": "Iconify",
