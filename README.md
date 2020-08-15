@@ -24,7 +24,7 @@
 
 ### Features
 
-- Inline display cosponding icons
+- Inline display corresponding icons
 - Auto completions for iconsets
 - Hover
 - Snippets
