@@ -64,6 +64,16 @@
           "default": true,
           "description": "Enabled Iconify inline annonations"
         },
+        "iconify.color": {
+          "type": "string",
+          "default": "auto",
+          "description": "Icon color hex for inline displaying."
+        },
+        "iconify.delimiter": {
+          "type": "string",
+          "default": ":",
+          "description": "Delimiter for separating between collection id and icon id"
+        },
         "iconify.includes": {
           "type": "array",
           "items": {

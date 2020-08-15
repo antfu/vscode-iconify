@@ -35,6 +35,8 @@ function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
 export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annonations: createConfigRef(`${EXT_NAMESPACE}.annonations`, true),
+  color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
+  delimiter: createConfigRef(`${EXT_NAMESPACE}.delimiter`, ':'),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
@@ -47,12 +49,17 @@ export const enabledCollections = computed(() => {
   return includes.filter(i => !excludes.includes(i))
 })
 
+export const color = computed(() => {
+  // TODO: based on current theme
+  return config.color === 'auto' ? '#fff' : config.color
+})
+
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d](?:${enabledCollections.value.join('|')}):`)
+  return new RegExp(`[^\\w\\d](?:${enabledCollections.value.join('|')})${config.delimiter}`)
 })
 
 export const REGEX_FULL = computed(() => {
-  return new RegExp(`[^\\w\\d]((?:${enabledCollections.value.join('|')}):[\\w-]+)`, 'g')
+  return new RegExp(`[^\\w\\d]((?:${enabledCollections.value.join('|')})${config.delimiter}[\\w-]+)`, 'g')
 })
 
 export function onConfigUpdated() {

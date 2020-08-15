@@ -13,5 +13,3 @@ export const SUPPORTED_LANG_IDS = [
   'html',
   'pug',
 ]
-
-export const DELIMITER = ':'

@@ -1,8 +1,8 @@
 import { TextDocument, languages, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext } from 'vscode'
-import { SUPPORTED_LANG_IDS, DELIMITER } from './meta'
+import { SUPPORTED_LANG_IDS } from './meta'
 import { collections } from './collections'
 import { getIconMarkdown } from './markdown'
-import { REGEX_NAMESPACE } from './config'
+import { config, REGEX_NAMESPACE } from './config'
 
 export function RegisterCompletion(ctx: ExtensionContext) {
   const provider: CompletionItemProvider = {
@@ -19,7 +19,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
       return info.icons
         .map((i) => {
           const item = new CompletionItem(i, CompletionItemKind.Text)
-          item.detail = `${id}:${i}`
+          item.detail = `${id}${config.delimiter}${i}`
           return item
         })
     },
@@ -35,7 +35,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
     languages.registerCompletionItemProvider(
       SUPPORTED_LANG_IDS,
       provider,
-      DELIMITER,
+      config.delimiter,
     ),
   )
 }

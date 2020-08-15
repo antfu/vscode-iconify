@@ -4,6 +4,7 @@ import { ExtensionContext } from 'vscode'
 import { COLLECTION_API } from './meta'
 import { toDataUrl, pathToSvg } from './utils/svgs'
 import { Log } from './utils'
+import { color, config } from './config'
 
 const LoadedIconSets: Record<string, IconifyJSON> = {}
 const dataURLCache: Record<string, string> = {}
@@ -55,7 +56,7 @@ export interface IconInfo extends IconifyIcon {
 }
 
 export async function getIconInfo(ctx: ExtensionContext, key: string) {
-  const [id, name] = key.split(':', 2)
+  const [id, name] = key.split(config.delimiter, 2)
   const data = await LoadIconSet(ctx, id)
   const icon = data?.icons?.[name] as IconInfo
   if (!data || !icon)
@@ -78,14 +79,15 @@ export async function getDataURL(ctx: ExtensionContext, info: IconInfo, fontSize
 export async function getDataURL(ctx: ExtensionContext, keyOrInfo: string|IconInfo, fontSize = 32) {
   const key = typeof keyOrInfo === 'string' ? keyOrInfo : keyOrInfo.key
 
-  if (dataURLCache[fontSize + key])
-    return dataURLCache[fontSize + key]
+  const cacheKey = color.value + fontSize + key
+  if (dataURLCache[cacheKey])
+    return dataURLCache[cacheKey]
 
   const info = typeof keyOrInfo === 'string' ? await getIconInfo(ctx, key) : keyOrInfo
 
   if (!info)
     return ''
 
-  dataURLCache[fontSize + key] = toDataUrl(pathToSvg(info, fontSize).replace(/currentColor/g, '#ddd'))
-  return dataURLCache[fontSize + key]
+  dataURLCache[cacheKey] = toDataUrl(pathToSvg(info, fontSize).replace(/currentColor/g, color.value))
+  return dataURLCache[cacheKey]
 }
