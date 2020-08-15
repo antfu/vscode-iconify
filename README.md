@@ -1,19 +1,8 @@
 <p align="center">
-<img src="https://github.com/antfu/vscode-iconify/blob/master/res/logo.png" alt="logo" width="150"/>
+<a href="https://iconify.design">
+<img src="./screenshots/preface.png" alt="logo" width='650'/>
+</a>
 </p>
-
-<h1 align="center">Iconify IntelliSense</h1>
-<p align="center">Intelligent <a href="https://iconify.design">Iconify</a> previewing and searching for VS Code</p>
-
-<br>
-
-
-<pre align="center">
-  Working in Progress
-</pre>
-
-
-<br>
 
 <p align="center">
 <a href="https://marketplace.visualstudio.com/items?itemName=antfu.iconify" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/v/antfu.iconify.svg?color=blue&amp;label=VS%20Code%20Marketplace&logo=visual-studio-code" alt="Visual Studio Marketplace Version" /></a>
@@ -25,6 +14,8 @@
 <a href="https://github.com/antfu/vscode-iconify/issues" target="__blank"><img src="https://img.shields.io/github/issues/antfu/vscode-iconify.svg?color=a38eed" alt="GitHub issues" /></a>
 <a href="https://github.com/antfu/vscode-iconify" target="__blank"><img alt="GitHub stars" src="https://img.shields.io/github/stars/antfu/vscode-iconify?style=social"></a>
 </p>
+
+<br>
 
 <p align='center'>
   <img src="https://github.com/antfu/vscode-iconify/blob/master/screenshots/preview-1.png" alt='preview'>
@@ -40,8 +31,6 @@
 
 ### TODO
 
-- ~~Fix viewbox for some iconsets~~
-- ~~Resize icons with font~~
 - Config/command to toggle display
 - Change Icon size for Dark/Light theme
 - Config to enable/disable some collections
