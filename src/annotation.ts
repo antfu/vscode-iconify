@@ -24,7 +24,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
     if (!editor)
       return
 
-    if (!config.annonations) {
+    if (!config.annotations) {
       editor.setDecorations(InlineIconDecoration, [])
       editor.setDecorations(HideTextDecoration, [])
       return
@@ -82,7 +82,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
     if (!editor)
       return
 
-    if (!config.annonations) {
+    if (!config.annotations) {
       editor.setDecorations(InlineIconDecoration, [])
       editor.setDecorations(HideTextDecoration, [])
       return

@@ -50,6 +50,18 @@
         "path": "snippets/html.json"
       }
     ],
+    "commands":[
+      {
+        "command": "iconify.toggle-annotations",
+        "category": "Iconify",
+        "title": "Toggle Annotations"
+      },
+      {
+        "command": "iconify.toggle-inplace",
+        "category": "Iconify",
+        "title": "Toggle In-place Mode"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "%extname%",
@@ -59,10 +71,10 @@
           "default": true,
           "description": "Use icon to replace the icon name."
         },
-        "iconify.annonations": {
+        "iconify.annotations": {
           "type": "boolean",
           "default": true,
-          "description": "Enabled Iconify inline annonations"
+          "description": "Enabled Iconify inline annotations"
         },
         "iconify.color": {
           "type": "string",

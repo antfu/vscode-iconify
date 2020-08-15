@@ -34,7 +34,7 @@ function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
 
 export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
-  annonations: createConfigRef(`${EXT_NAMESPACE}.annonations`, true),
+  annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
   color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
   delimiter: createConfigRef(`${EXT_NAMESPACE}.delimiter`, ':'),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),

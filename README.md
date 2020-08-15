@@ -31,7 +31,7 @@
 
 ### TODO
 
-- Config/command to toggle display
+- ✅ Config/command to toggle display
 - Change Icon color for Dark/Light theme
 - ✅ Config for customize color
 - ✅ Config to enable/disable some collections
