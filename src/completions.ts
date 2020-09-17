@@ -1,5 +1,4 @@
 import { TextDocument, languages, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext } from 'vscode'
-import { SUPPORTED_LANG_IDS } from './meta'
 import { collections } from './collections'
 import { getIconMarkdown } from './markdown'
 import { config, REGEX_NAMESPACE } from './config'
@@ -33,7 +32,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
 
   ctx.subscriptions.push(
     languages.registerCompletionItemProvider(
-      SUPPORTED_LANG_IDS,
+      config.languageIds,
       provider,
       config.delimiter,
     ),

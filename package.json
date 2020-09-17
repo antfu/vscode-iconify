@@ -79,12 +79,31 @@
         "iconify.color": {
           "type": "string",
           "default": "auto",
-          "description": "Icon color hex for inline displaying."
+          "description": "Icon color hex for inline displaying"
         },
         "iconify.delimiter": {
           "type": "string",
           "default": ":",
           "description": "Delimiter for separating between collection id and icon id"
+        },
+        "iconify.languageIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact",
+            "vue",
+            "svelte",
+            "html",
+            "pug",
+            "json",
+            "yaml"
+          ],
+          "description": "Array of language ids to enable annotations"
         },
         "iconify.includes": {
           "type": "array",

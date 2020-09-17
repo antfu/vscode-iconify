@@ -40,6 +40,7 @@ export const config = reactive({
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
+  languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
 })
 
 export const enabledCollections = computed(() => {
