@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/antfu/vscode-iconify/compare/v0.0.5...v0.0.6) (2020-09-17)
+
+
+### Features
+
+* new config languageIds ([6f868cf](https://github.com/antfu/vscode-iconify/commit/6f868cf3c1c8298aa1bbbd440b957d0332295334))
+
 ### [0.0.5](https://github.com/antfu/vscode-iconify/compare/v0.0.4...v0.0.5) (2020-08-15)
 
 
