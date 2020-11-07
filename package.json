@@ -64,7 +64,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "%extname%",
+      "title": "Iconify IntelliSense",
       "properties": {
         "iconify.inplace": {
           "type": "boolean",
