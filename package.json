@@ -84,7 +84,16 @@
         "iconify.delimiter": {
           "type": "string",
           "default": ":",
+          "deprecationMessage": "DEPREACTED, use `iconify.delimiters` instead",
           "description": "Delimiter for separating between collection id and icon id"
+        },
+        "iconify.delimiters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [":", "-"],
+          "description": "Delimiters for separating between collection id and icon id"
         },
         "iconify.languageIds": {
           "type": "array",
@@ -103,7 +112,7 @@
             "json",
             "yaml"
           ],
-          "description": "Array of language ids to enable annotations"
+          "description": "Array of language IDs to enable annotations"
         },
         "iconify.includes": {
           "type": "array",

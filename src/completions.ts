@@ -18,7 +18,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
       return info.icons
         .map((i) => {
           const item = new CompletionItem(i, CompletionItemKind.Text)
-          item.detail = `${id}${config.delimiter}${i}`
+          item.detail = `${id}${config.delimiters[0]}${i}`
           return item
         })
     },
@@ -34,7 +34,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
     languages.registerCompletionItemProvider(
       config.languageIds,
       provider,
-      config.delimiter,
+      ...config.delimiters,
     ),
   )
 }

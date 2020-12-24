@@ -4,7 +4,7 @@ import { ExtensionContext } from 'vscode'
 import { COLLECTION_API } from './meta'
 import { toDataUrl, pathToSvg } from './utils/svgs'
 import { Log } from './utils'
-import { color, config } from './config'
+import { color, config, DelimitersSeperator } from './config'
 
 const LoadedIconSets: Record<string, IconifyJSON> = {}
 const dataURLCache: Record<string, string> = {}
@@ -56,7 +56,7 @@ export interface IconInfo extends IconifyIcon {
 }
 
 export async function getIconInfo(ctx: ExtensionContext, key: string) {
-  const [id, name] = key.split(config.delimiter, 2)
+  const [id, name] = key.split(DelimitersSeperator.value, 2)
   const data = await LoadIconSet(ctx, id)
   const icon = data?.icons?.[name] as IconInfo
   if (!data || !icon)
