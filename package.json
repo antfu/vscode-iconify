@@ -3,7 +3,7 @@
   "displayName": "Iconify IntelliSense",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "publisher": "antfu",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "private": true,
   "preview": true,
@@ -92,7 +92,10 @@
           "items": {
             "type": "string"
           },
-          "default": [":", "-"],
+          "default": [
+            ":",
+            "-"
+          ],
           "description": "Delimiters for separating between collection id and icon id"
         },
         "iconify.languageIds": {

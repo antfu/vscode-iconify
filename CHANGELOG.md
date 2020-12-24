@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/antfu/vscode-iconify/compare/v0.0.5...v0.0.7) (2020-12-24)
+
+
+### Features
+
+* new config languageIds ([5d79361](https://github.com/antfu/vscode-iconify/commit/5d79361a1c9aaae73c2f2b2c11546fea1b28e921))
+* support mutilple delimiters ([3cc3b47](https://github.com/antfu/vscode-iconify/commit/3cc3b474bef38f96010d6851d392ec04ecbb4b05))
+
+
+### Bug Fixes
+
+* extension name in configuration ([#4](https://github.com/antfu/vscode-iconify/issues/4)) ([431e87b](https://github.com/antfu/vscode-iconify/commit/431e87b3c128e1b0af9f762485e6cc3ea78d1e5e))
+
 ### [0.0.6](https://github.com/antfu/vscode-iconify/compare/v0.0.5...v0.0.6) (2020-09-17)
 
 
