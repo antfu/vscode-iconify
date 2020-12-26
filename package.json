@@ -60,6 +60,11 @@
         "command": "iconify.toggle-inplace",
         "category": "Iconify",
         "title": "Toggle In-place Mode"
+      },
+      {
+        "command": "iconify.clear-cache",
+        "category": "Iconify",
+        "title": "Clear icon cache"
       }
     ],
     "configuration": {
@@ -69,7 +74,7 @@
         "iconify.inplace": {
           "type": "boolean",
           "default": true,
-          "description": "Use icon to replace the icon name."
+          "description": "Use icon graph to replace the icon name."
         },
         "iconify.annotations": {
           "type": "boolean",

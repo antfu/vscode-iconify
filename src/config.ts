@@ -43,6 +43,22 @@ export const config = reactive({
   languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
 })
 
+export function parseIcon(str: string) {
+  const collection = enabledCollections.value.find(i => str.startsWith(i))
+  if (!collection)
+    return
+
+  if (!config.delimiters.includes(str[collection.length]))
+    return
+
+  const icon = str.slice(collection.length + 1)
+
+  if (!icon)
+    return
+
+  return { collection, icon }
+}
+
 export const DelimitersSeperator = computed(() => {
   return new RegExp(`[${config.delimiters.join('')}]`, 'g')
 })

@@ -4,18 +4,25 @@ import { ExtensionContext } from 'vscode'
 import { COLLECTION_API } from './meta'
 import { toDataUrl, pathToSvg } from './utils/svgs'
 import { Log } from './utils'
-import { color, config, DelimitersSeperator } from './config'
+import { color, parseIcon } from './config'
+import { collectionIds } from './collections'
 
 const LoadedIconSets: Record<string, IconifyJSON> = {}
 const dataURLCache: Record<string, string> = {}
 
+let _tasks: Record<string, Promise<any>> = {}
 export const UniqPromise = <T>(fn: (ctx: ExtensionContext, id: string) => Promise<T>) => {
-  const tasks: Record<string, Promise<T>> = {}
-
   return async(ctx: ExtensionContext, id: string) => {
-    if (!tasks[id])
-      tasks[id] = fn(ctx, id)
-    return await tasks[id]
+    if (!_tasks[id])
+      _tasks[id] = fn(ctx, id)
+    return await _tasks[id]
+  }
+}
+
+export function clearCache(ctx: ExtensionContext) {
+  for (const id of collectionIds) {
+    ctx.globalState.update(`icons-${id}`, undefined)
+    _tasks = {}
   }
 }
 
@@ -53,12 +60,17 @@ export interface IconInfo extends IconifyIcon {
   height: number
   key: string
   ratio: number
+  collection: string
+  id: string
 }
 
 export async function getIconInfo(ctx: ExtensionContext, key: string) {
-  const [id, name] = key.split(DelimitersSeperator.value, 2)
-  const data = await LoadIconSet(ctx, id)
-  const icon = data?.icons?.[name] as IconInfo
+  const result = parseIcon(key)
+  if (!result)
+    return
+
+  const data = await LoadIconSet(ctx, result.collection)
+  const icon = data?.icons?.[result.icon] as IconInfo
   if (!data || !icon)
     return null
 
@@ -68,6 +80,8 @@ export async function getIconInfo(ctx: ExtensionContext, key: string) {
   if (!icon.height)
     icon.height = data.height || 32
 
+  icon.collection = result.collection
+  icon.id = result.icon
   icon.key = key
   icon.ratio = (data.width! / data.height!) || 1
 
