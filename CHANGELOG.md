@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/antfu/vscode-iconify/compare/v0.0.7...v0.0.8) (2020-12-26)
+
+
+### Bug Fixes
+
+* collection parse, close [#5](https://github.com/antfu/vscode-iconify/issues/5) ([b0e62c8](https://github.com/antfu/vscode-iconify/commit/b0e62c8dc44b8e28cec2ec4ecf8e4da6df6a33fd))
+
 ### [0.0.7](https://github.com/antfu/vscode-iconify/compare/v0.0.5...v0.0.7) (2020-12-24)
 
 
