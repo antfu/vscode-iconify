@@ -71,8 +71,11 @@ export const enabledCollections = computed(() => {
 })
 
 export const color = computed(() => {
-  // TODO: based on current theme
-  return config.color === 'auto' ? '#fff' : config.color
+  return config.color === 'auto'
+    ? isDarkTheme()
+      ? '#eee'
+      : '#222'
+    : config.color
 })
 
 export const REGEX_NAMESPACE = computed(() => {
@@ -85,4 +88,19 @@ export const REGEX_FULL = computed(() => {
 
 export function onConfigUpdated() {
   _configState.value = +new Date()
+}
+
+export function isDarkTheme() {
+  const theme = createConfigRef('workbench.colorTheme', '', true)
+
+  // must be dark
+  if (theme.value.match(/dark|black/i) != null)
+    return true
+
+  // must be light
+  if (theme.value.match(/light/i) != null)
+    return false
+
+  // IDK, maybe dark
+  return true
 }
