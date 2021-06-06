@@ -1,4 +1,4 @@
-import { window, TextEditor, DecorationOptions, Range, Uri, ExtensionContext, workspace } from 'vscode'
+import { window, TextEditor, DecorationOptions, Range, Uri, ExtensionContext, workspace, DecorationRangeBehavior } from 'vscode'
 import { REGEX_FULL, config, onConfigUpdated } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'
@@ -12,6 +12,7 @@ export interface DecorationMatch extends DecorationOptions {
 export function RegisterAnnotations(ctx: ExtensionContext) {
   const InlineIconDecoration = window.createTextEditorDecorationType({
     textDecoration: 'none; opacity: 0.6 !important;',
+    rangeBehavior: DecorationRangeBehavior.ClosedClosed,
   })
   const HideTextDecoration = window.createTextEditorDecorationType({
     textDecoration: 'none; display: none;', // a hack to inject custom style
@@ -47,33 +48,27 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
       keys.push([new Range(startPos, endPos), key])
     }
 
-    decorations = (
-      await Promise.all(
-        keys.map(
-          async([range, key]) => {
-            const info = await getIconInfo(ctx, key)
-            if (!info)
-              return undefined
+    decorations = (await Promise.all(keys.map(async([range, key]) => {
+      const info = await getIconInfo(ctx, key)
+      if (!info)
+        return undefined
 
-            const dataurl = await getDataURL(ctx, info, config.fontSize * 1.2)
+      const dataurl = await getDataURL(ctx, info, config.fontSize * 1.2)
 
-            const item: DecorationMatch = {
-              range,
-              renderOptions: {
-                before: {
-                  contentIconPath: Uri.parse(dataurl),
-                  margin: `-${config.fontSize}px 2px; transform: translate(-2px, 3px);`,
-                  width: `${config.fontSize * info.ratio * 1.1}px`,
-                },
-              },
-              hoverMessage: await getIconMarkdown(ctx, key),
-              key,
-            }
-            return item
+      const item: DecorationMatch = {
+        range,
+        renderOptions: {
+          before: {
+            contentIconPath: Uri.parse(dataurl),
+            margin: `-${config.fontSize}px 2px; transform: translate(-2px, 3px);`,
+            width: `${config.fontSize * info.ratio * 1.1}px`,
           },
-        ),
-      ))
-      .filter(isTruthy)
+        },
+        hoverMessage: await getIconMarkdown(ctx, key),
+        key,
+      }
+      return item
+    }))).filter(isTruthy)
 
     refreshDecorations()
   }
