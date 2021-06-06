@@ -332,10 +332,10 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs --external vscode",
+    "build": "esno scripts/build.ts",
     "dev": "pnpm build -- --watch",
     "prepare": "esno scripts/prepare.ts",
-    "release": "esno scripts/publish.ts"
+    "release": "bumpp --tag --push --commit"
   },
   "devDependencies": {
     "@antfu/eslint-config-ts": "^0.6.5",
@@ -346,6 +346,7 @@
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@vue/reactivity": "^3.0.11",
     "axios": "^0.21.1",
+    "bumpp": "^6.0.6",
     "eslint": "^7.28.0",
     "esno": "^0.6.0",
     "fs-extra": "^10.0.0",

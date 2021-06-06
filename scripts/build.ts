@@ -1,11 +1,9 @@
 import { execSync } from 'child_process'
 import fs from 'fs-extra'
 
-async function publish() {
+async function build() {
   await fs.remove('./dist')
-  execSync('npx standard-version')
-
-  execSync('npm run build', { stdio: 'inherit' })
+  execSync('tsup src/index.ts --format cjs --external vscode', { stdio: 'inherit' })
 
   const files = [
     'LICENSE',
@@ -24,10 +22,6 @@ async function publish() {
   delete json.devDependencies
   json.main = 'index.js'
   await fs.writeJSON('./dist/package.json', json)
-
-  // execSync('npm i --only=production --no-package-lock', { stdio: 'inherit', cwd: './dist' })
-
-  execSync('vsce publish', { stdio: 'inherit', cwd: './dist' })
 }
 
-publish()
+build()
