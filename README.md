@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://iconify.design">
-<img src="./screenshots/preface.png" alt="logo" width='650'/>
+<img src="https://github.com/antfu/vscode-iconify/blob/master/screenshots/preview-1.png?raw=true" alt="logo" width='650'/>
 </a>
 </p>
 
