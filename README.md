@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://iconify.design">
-<img src="https://github.com/antfu/vscode-iconify/blob/master/screenshots/preview-1.png?raw=true" alt="logo" width='650'/>
+<img src="https://github.com/antfu/vscode-iconify/blob/master/screenshots/preface.png?raw=true" alt="logo" width='650'/>
 </a>
 </p>
 
@@ -18,7 +18,7 @@
 <br>
 
 <p align='center'>
-  <img src="https://github.com/antfu/vscode-iconify/blob/master/screenshots/preview-1.png" alt='preview'>
+  <img src="https://github.com/antfu/vscode-iconify/blob/master/screenshots/preview-1.png?raw=true" alt='preview'>
 </p>
 
 
