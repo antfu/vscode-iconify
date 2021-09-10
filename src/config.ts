@@ -22,7 +22,7 @@ function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
   return computed({
     get: () => {
       // to force computed update
-      // eslint-disable-next-line
+      // eslint-disable-next-line no-unused-expressions
       _configState.value
       return getConfig<T>(key) ?? defaultValue
     },
@@ -36,11 +36,18 @@ export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
   color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
-  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '-']),
+  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '-', '/']),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
   languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
+})
+
+export const enabledCollections = computed(() => {
+  const includes = config.includes?.length ? config.includes : collectionIds
+  const excludes = config.excludes || []
+
+  return includes.filter(i => !excludes.includes(i))
 })
 
 export function parseIcon(str: string) {
@@ -59,16 +66,9 @@ export function parseIcon(str: string) {
   return { collection, icon }
 }
 
-export const DelimitersSeperator = computed(() => {
-  return new RegExp(`[${config.delimiters.join('')}]`, 'g')
-})
+export const delimiters = computed(() => `[${escapeRegExp(config.delimiters.join(''))}]`)
 
-export const enabledCollections = computed(() => {
-  const includes = config.includes?.length ? config.includes : collectionIds
-  const excludes = config.excludes || []
-
-  return includes.filter(i => !excludes.includes(i))
-})
+export const DelimitersSeperator = computed(() => new RegExp(delimiters.value, 'g'))
 
 export const color = computed(() => {
   return config.color === 'auto'
@@ -78,12 +78,16 @@ export const color = computed(() => {
     : config.color
 })
 
+function escapeRegExp(text: string) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+}
+
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d](${enabledCollections.value.join('|')})[${config.delimiters.join('')}][\\w-]*$`)
+  return new RegExp(`[^\\w\\d](${enabledCollections.value.join('|')})${delimiters.value}[\\w-]*$`)
 })
 
 export const REGEX_FULL = computed(() => {
-  return new RegExp(`[^\\w\\d]((?:${enabledCollections.value.join('|')})[${config.delimiters.join('')}][\\w-]+)`, 'g')
+  return new RegExp(`[^\\w\\d]((?:${enabledCollections.value.join('|')})${delimiters.value}[\\w-]+)`, 'g')
 })
 
 export function onConfigUpdated() {
