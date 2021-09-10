@@ -99,7 +99,8 @@
           },
           "default": [
             ":",
-            "-"
+            "-",
+            "/"
           ],
           "description": "Delimiters for separating between collection id and icon id"
         },
