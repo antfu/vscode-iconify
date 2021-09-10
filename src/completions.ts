@@ -1,16 +1,17 @@
-import { TextDocument, languages, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext } from 'vscode'
+import { TextDocument, languages, Position, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext, Range } from 'vscode'
 import { collections } from './collections'
 import { getIconMarkdown } from './markdown'
 import { config, REGEX_NAMESPACE } from './config'
 
 export function RegisterCompletion(ctx: ExtensionContext) {
   const provider: CompletionItemProvider = {
-    provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
-      const match = document.getWordRangeAtPosition(position, REGEX_NAMESPACE.value)
+    provideCompletionItems(document: TextDocument, position: Position) {
+      const line = document.getText(new Range(new Position(position.line, 0), new Position(position.line, position.character)))
+      const match = line.match(REGEX_NAMESPACE.value)
       if (!match)
         return null
 
-      const id = document.getText(match).slice(1, -1)
+      const id = match[1]
       const info = collections.find(i => i.id === id)
       if (!info)
         return null

@@ -79,7 +79,7 @@ export const color = computed(() => {
 })
 
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d](?:${enabledCollections.value.join('|')})[${config.delimiters.join('')}]`)
+  return new RegExp(`[^\\w\\d](${enabledCollections.value.join('|')})[${config.delimiters.join('')}][\\w-]*$`)
 })
 
 export const REGEX_FULL = computed(() => {
