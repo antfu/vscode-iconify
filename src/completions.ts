@@ -1,10 +1,10 @@
 import { TextDocument, languages, Position, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext, Range } from 'vscode'
 import { collections } from './collections'
-import { getIconMarkdown } from './markdown'
-import { config, REGEX_NAMESPACE } from './config'
+import { getIconMarkdown, getCollectionMarkdown } from './markdown'
+import { config, enabledCollections, REGEX_NAMESPACE } from './config'
 
 export function RegisterCompletion(ctx: ExtensionContext) {
-  const provider: CompletionItemProvider = {
+  const iconProvider: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position) {
       const line = document.getText(new Range(new Position(position.line, 0), new Position(position.line, position.character)))
       const match = line.match(REGEX_NAMESPACE.value)
@@ -31,11 +31,37 @@ export function RegisterCompletion(ctx: ExtensionContext) {
     },
   }
 
+  const REGEX_COLLECTION = /icon=['"][\w-]*$/
+
+  const collectionProvider: CompletionItemProvider = {
+    provideCompletionItems(document: TextDocument, position: Position) {
+      const line = document.getText(new Range(new Position(position.line, 0), new Position(position.line, position.character)))
+      const match = REGEX_COLLECTION.test(line)
+      if (!match)
+        return null
+
+      return enabledCollections.value
+        .map(c => new CompletionItem(c, CompletionItemKind.Text))
+    },
+
+    async resolveCompletionItem(item: CompletionItem) {
+      return {
+        ...item,
+        documentation: await getCollectionMarkdown(ctx, item.label as string),
+      }
+    },
+  }
+
   ctx.subscriptions.push(
     languages.registerCompletionItemProvider(
       config.languageIds,
-      provider,
+      iconProvider,
       ...config.delimiters,
+    ),
+    languages.registerCompletionItemProvider(
+      config.languageIds,
+      collectionProvider,
+      '"', '\'',
     ),
   )
 }
