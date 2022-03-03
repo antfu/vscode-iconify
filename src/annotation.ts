@@ -1,4 +1,5 @@
-import { window, TextEditor, DecorationOptions, Range, Uri, ExtensionContext, workspace, DecorationRangeBehavior } from 'vscode'
+import type { DecorationOptions, ExtensionContext, TextEditor } from 'vscode'
+import { DecorationRangeBehavior, Range, Uri, window, workspace } from 'vscode'
 import { REGEX_FULL, config, onConfigUpdated } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'

@@ -1,5 +1,5 @@
 import { ColorThemeKind, window, workspace } from 'vscode'
-import { reactive, computed, ref } from '@vue/reactivity'
+import { computed, reactive, ref } from '@vue/reactivity'
 import { EXT_NAMESPACE } from './meta'
 import { collectionIds } from './collections'
 

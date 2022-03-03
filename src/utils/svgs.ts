@@ -1,4 +1,4 @@
-import { IconInfo } from '../loader'
+import type { IconInfo } from '../loader'
 import Base64 from './base64'
 
 export function toDataUrl(str: string) {

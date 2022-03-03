@@ -1,4 +1,4 @@
-import { ExtensionContext } from 'vscode'
+import type { ExtensionContext } from 'vscode'
 import { version } from '../package.json'
 import { Log } from './utils'
 import { collections } from './collections'

@@ -1,4 +1,5 @@
-import { MarkdownString, ExtensionContext } from 'vscode'
+import type { ExtensionContext } from 'vscode'
+import { MarkdownString } from 'vscode'
 import { DelimitersSeperator, config } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { collections } from './collections'

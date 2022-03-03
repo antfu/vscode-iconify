@@ -1,4 +1,5 @@
-import { OutputChannel, window } from 'vscode'
+import type { OutputChannel } from 'vscode'
+import { window } from 'vscode'
 import { EXT_NAME } from '../meta'
 
 export class Log {

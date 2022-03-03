@@ -1,7 +1,8 @@
-import { TextDocument, languages, Position, CompletionItem, CompletionItemProvider, CompletionItemKind, ExtensionContext, Range } from 'vscode'
+import type { CompletionItemProvider, ExtensionContext, TextDocument } from 'vscode'
+import { CompletionItem, CompletionItemKind, Position, Range, languages } from 'vscode'
 import { collections } from './collections'
-import { getIconMarkdown, getCollectionMarkdown } from './markdown'
-import { config, enabledCollections, REGEX_NAMESPACE } from './config'
+import { getCollectionMarkdown, getIconMarkdown } from './markdown'
+import { REGEX_NAMESPACE, config, enabledCollections } from './config'
 
 export function RegisterCompletion(ctx: ExtensionContext) {
   const iconProvider: CompletionItemProvider = {

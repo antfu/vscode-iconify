@@ -1,4 +1,5 @@
-import { DecorationOptions, ExtensionContext, commands } from 'vscode'
+import type { DecorationOptions, ExtensionContext } from 'vscode'
+import { commands } from 'vscode'
 import { config } from './config'
 import { clearCache } from './loader'
 
