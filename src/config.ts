@@ -1,4 +1,4 @@
-import { workspace } from 'vscode'
+import { ColorThemeKind, window, workspace } from 'vscode'
 import { reactive, computed, ref } from '@vue/reactivity'
 import { EXT_NAMESPACE } from './meta'
 import { collectionIds } from './collections'
@@ -94,7 +94,12 @@ export function onConfigUpdated() {
   _configState.value = +new Date()
 }
 
-export function isDarkTheme() {
+// First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name
+function isDarkTheme() {
+  const themeKind = window?.activeColorTheme?.kind
+  if (themeKind && themeKind === ColorThemeKind?.Dark)
+    return true
+
   const theme = createConfigRef('workbench.colorTheme', '', true)
 
   // must be dark
