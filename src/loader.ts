@@ -1,5 +1,5 @@
 import type { IconifyIcon, IconifyJSON } from '@iconify/iconify'
-import axios from 'axios'
+import { $fetch } from 'ohmyfetch'
 import type { ExtensionContext } from 'vscode'
 import { COLLECTION_API } from './meta'
 import { pathToSvg, toDataUrl } from './utils/svgs'
@@ -41,7 +41,7 @@ export const LoadIconSet = UniqPromise(async(ctx: ExtensionContext, id: string) 
       try {
         const url = `${COLLECTION_API}/${id}.json`
         Log.info(`☁️ [${id}] Downloading from ${url}`)
-        data = (await axios.get(url)).data
+        data = await $fetch(url)
         Log.info(`✅ [${id}] Downloaded`)
         ctx.globalState.update(key, data)
         LoadedIconSets[id] = data!
