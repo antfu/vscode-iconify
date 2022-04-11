@@ -50,8 +50,13 @@ export const enabledCollections = computed(() => {
   return includes.filter(i => !excludes.includes(i))
 })
 
+function verifyCollection(collection: string, str: string) {
+  const separated = str[collection.length]
+  return config.delimiters.includes(separated)
+}
+
 export function parseIcon(str: string) {
-  const collection = enabledCollections.value.find(i => str.startsWith(i))
+  const collection = enabledCollections.value.find(i => str.startsWith(i) && verifyCollection(i, str))
   if (!collection)
     return
 
