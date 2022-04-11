@@ -1,9 +1,9 @@
 {
-	"Iconify HTML": {
-		"prefix": "icon",
-		"body": [
-			"<span class=\"iconify\" data-icon=\"$1\"></span>"
-		],
-		"description": "Iconify HTML"
-	}
+  "Iconify HTML": {
+    "prefix": "icon",
+    "body": [
+      "<span class=\"iconify\" data-icon=\"$1\"></span>"
+    ],
+    "description": "Iconify HTML"
+  }
 }
