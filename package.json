@@ -1,24 +1,36 @@
 {
+  "publisher": "antfu",
   "name": "iconify",
   "displayName": "Iconify IntelliSense",
   "version": "0.3.2",
   "private": true,
+  "packageManager": "pnpm@7.1.7",
   "description": "Intelligent Iconify previewing and searching for VS Code",
-  "publisher": "antfu",
+  "license": "MIT",
+  "homepage": "https://github.com/antfu/vscode-iconify",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antfu/vscode-iconify"
+  },
+  "bugs": "https://github.com/antfu/vscode-iconify/issues",
   "keywords": [
     "icons",
     "iconify"
   ],
-  "license": "MIT",
-  "preview": true,
-  "engines": {
-    "vscode": "^1.47.0"
+  "sponsor": {
+    "url": "https://github.com/sponsors/antfu"
   },
+  "preview": true,
   "categories": [
     "Other",
     "Visualization",
     "Snippets"
   ],
+  "main": "dist/index.js",
+  "icon": "res/logo.png",
+  "engines": {
+    "vscode": "^1.47.0"
+  },
   "activationEvents": [
     "workspaceContains:package.json",
     "onLanguage:vue",
@@ -31,14 +43,6 @@
     "onLanguage:html",
     "onLanguage:css"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/antfu/vscode-iconify"
-  },
-  "homepage": "https://github.com/antfu/vscode-iconify",
-  "bugs": "https://github.com/antfu/vscode-iconify/issues",
-  "icon": "res/logo.png",
-  "main": "dist/index.js",
   "contributes": {
     "snippets": [
       {
@@ -128,6 +132,7 @@
           "items": {
             "type": "string",
             "enum": [
+              "material-symbols",
               "ic",
               "mdi",
               "ph",
@@ -174,6 +179,8 @@
               "gala",
               "fluent",
               "icon-park-outline",
+              "icon-park-solid",
+              "icon-park-twotone",
               "icon-park",
               "vscode-icons",
               "jam",
@@ -263,6 +270,7 @@
           "items": {
             "type": "string",
             "enum": [
+              "material-symbols",
               "ic",
               "mdi",
               "ph",
@@ -309,6 +317,8 @@
               "gala",
               "fluent",
               "icon-park-outline",
+              "icon-park-solid",
+              "icon-park-twotone",
               "icon-park",
               "vscode-icons",
               "jam",
@@ -404,20 +414,20 @@
     "release": "bumpp --tag --push --commit"
   },
   "devDependencies": {
-    "@antfu/eslint-config-ts": "^0.20.2",
+    "@antfu/eslint-config-ts": "^0.25.1",
     "@iconify/iconify": "^2.2.1",
-    "@iconify/json": "^2.1.27",
+    "@iconify/json": "^2.1.59",
     "@types/fs-extra": "^9.0.13",
-    "@types/vscode": "^1.66.0",
-    "@typescript-eslint/eslint-plugin": "^5.18.0",
-    "@vue/reactivity": "^3.2.31",
+    "@types/vscode": "^1.68.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@vue/reactivity": "^3.2.37",
     "bumpp": "^7.1.1",
-    "eslint": "^8.13.0",
-    "esno": "^0.14.1",
-    "fs-extra": "^10.0.1",
-    "ohmyfetch": "^0.4.15",
-    "standard-version": "^9.3.2",
-    "tsup": "^5.12.4",
-    "typescript": "^4.6.3"
+    "eslint": "^8.17.0",
+    "esno": "^0.16.3",
+    "fs-extra": "^10.1.0",
+    "ohmyfetch": "^0.4.18",
+    "standard-version": "^9.5.0",
+    "tsup": "^6.1.0",
+    "typescript": "^4.7.3"
   }
 }

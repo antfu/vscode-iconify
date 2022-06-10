@@ -12,7 +12,7 @@ const dataURLCache: Record<string, string> = {}
 
 let _tasks: Record<string, Promise<any>> = {}
 export const UniqPromise = <T>(fn: (ctx: ExtensionContext, id: string) => Promise<T>) => {
-  return async(ctx: ExtensionContext, id: string) => {
+  return async (ctx: ExtensionContext, id: string) => {
     if (!_tasks[id])
       _tasks[id] = fn(ctx, id)
     return await _tasks[id]
@@ -26,7 +26,7 @@ export function clearCache(ctx: ExtensionContext) {
   }
 }
 
-export const LoadIconSet = UniqPromise(async(ctx: ExtensionContext, id: string) => {
+export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string) => {
   let data: IconifyJSON = LoadedIconSets[id]
 
   if (!data) {
@@ -90,7 +90,7 @@ export async function getIconInfo(ctx: ExtensionContext, key: string) {
 
 export async function getDataURL(ctx: ExtensionContext, key: string, fontSize?: number): Promise<string>
 export async function getDataURL(ctx: ExtensionContext, info: IconInfo, fontSize?: number): Promise<string>
-export async function getDataURL(ctx: ExtensionContext, keyOrInfo: string|IconInfo, fontSize = 32) {
+export async function getDataURL(ctx: ExtensionContext, keyOrInfo: string | IconInfo, fontSize = 32) {
   const key = typeof keyOrInfo === 'string' ? keyOrInfo : keyOrInfo.key
 
   const cacheKey = color.value + fontSize + key

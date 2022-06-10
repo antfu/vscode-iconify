@@ -49,7 +49,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
       keys.push([new Range(startPos, endPos), key])
     }
 
-    decorations = (await Promise.all(keys.map(async([range, key]) => {
+    decorations = (await Promise.all(keys.map(async ([range, key]) => {
       const info = await getIconInfo(ctx, key)
       if (!info)
         return undefined
