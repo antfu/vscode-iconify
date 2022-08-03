@@ -1,10 +1,9 @@
 import type { IconifyIcon, IconifyJSON } from '@iconify/iconify'
 import { $fetch } from 'ohmyfetch'
 import type { ExtensionContext } from 'vscode'
-import { COLLECTION_API } from './meta'
 import { pathToSvg, toDataUrl } from './utils/svgs'
 import { Log } from './utils'
-import { color, parseIcon } from './config'
+import { color, config, parseIcon } from './config'
 import { collectionIds } from './collections'
 
 const LoadedIconSets: Record<string, IconifyJSON> = {}
@@ -39,7 +38,7 @@ export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string)
     }
     else {
       try {
-        const url = `${COLLECTION_API}/${id}.json`
+        const url = `${config.collectionApi}/${id}.json`
         Log.info(`☁️ [${id}] Downloading from ${url}`)
         data = await $fetch(url)
         Log.info(`✅ [${id}] Downloaded`)
