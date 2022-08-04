@@ -8,7 +8,6 @@ async function build() {
   const files = [
     'LICENSE',
     'README.md',
-    'CHANGELOG.md',
     'snippets',
     '.vscodeignore',
     'res',
