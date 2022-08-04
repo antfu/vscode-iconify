@@ -403,16 +403,12 @@
           "default": null,
           "description": "Collection IDs to be excluded for detection"
         },
-        "iconify.collectionApi": {
+        "iconify.cdnEntry": {
           "type": "string",
           "default": "https://cdn.jsdelivr.net/gh/iconify/icon-sets/json",
-          "description": "Collection api of iconify icon-sets",
+          "description": "CDN entry of iconify icon-sets",
           "items": {
-            "type": "string",
-            "enum": [
-              "https://cdn.jsdelivr.net/gh/iconify/icon-sets/json",
-              "https://fastly.jsdelivr.net/gh/iconify/icon-sets/json"
-            ]
+            "type": "string"
           }
         }
       }
