@@ -402,6 +402,11 @@
           },
           "default": null,
           "description": "Collection IDs to be excluded for detection"
+        },
+        "iconify.cdnEntry": {
+          "type": "string",
+          "default": "https://cdn.jsdelivr.net/gh/iconify/icon-sets/json",
+          "description": "CDN entry of iconify icon-sets"
         }
       }
     }
