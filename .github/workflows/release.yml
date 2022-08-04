@@ -14,13 +14,13 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
           registry-url: https://registry.npmjs.org/
       - run: npm i -g pnpm @antfu/ni
       - run: nci
-      - run: npx conventional-github-releaser -p angular
+      - run: npx changelogithub
         env:
-          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - run: yarn run build
       - run: cd dist && npx vsce publish -p ${{secrets.VSCE_TOKEN}}
         env:
