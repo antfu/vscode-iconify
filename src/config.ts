@@ -41,7 +41,7 @@ export const config = reactive({
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
   languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
-  collectionApi: createConfigRef(`${EXT_NAMESPACE}.collectionApi`, 'https://cdn.jsdelivr.net/gh/iconify/icon-sets/json'),
+  cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://cdn.jsdelivr.net/gh/iconify/icon-sets/json'),
 })
 
 export const enabledCollections = computed(() => {

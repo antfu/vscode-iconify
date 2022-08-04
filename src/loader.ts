@@ -38,7 +38,7 @@ export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string)
     }
     else {
       try {
-        const url = `${config.collectionApi}/${id}.json`
+        const url = `${config.cdnEntry}/${id}.json`
         Log.info(`☁️ [${id}] Downloading from ${url}`)
         data = await $fetch(url)
         Log.info(`✅ [${id}] Downloaded`)
