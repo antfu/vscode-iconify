@@ -406,10 +406,7 @@
         "iconify.cdnEntry": {
           "type": "string",
           "default": "https://cdn.jsdelivr.net/gh/iconify/icon-sets/json",
-          "description": "CDN entry of iconify icon-sets",
-          "items": {
-            "type": "string"
-          }
+          "description": "CDN entry of iconify icon-sets"
         }
       }
     }
