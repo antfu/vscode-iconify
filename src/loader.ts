@@ -3,7 +3,7 @@ import { $fetch } from 'ohmyfetch'
 import type { ExtensionContext } from 'vscode'
 import { pathToSvg, toDataUrl } from './utils/svgs'
 import { Log } from './utils'
-import { color, config, parseIcon } from './config'
+import { color, config, customCollections, parseIcon } from './config'
 import { collectionIds } from './collections'
 
 const LoadedIconSets: Record<string, IconifyJSON> = {}
@@ -26,7 +26,7 @@ export function clearCache(ctx: ExtensionContext) {
 }
 
 export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string) => {
-  let data: IconifyJSON = LoadedIconSets[id]
+  let data: IconifyJSON = LoadedIconSets[id] || customCollections.value.find(c => c.prefix === id)
 
   if (!data) {
     const key = `icons-${id}`

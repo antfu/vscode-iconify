@@ -409,6 +409,14 @@
           "type": "string",
           "default": "https://cdn.jsdelivr.net/gh/iconify/icon-sets/json",
           "description": "CDN entry of iconify icon-sets"
+        },
+        "iconify.customCollectionJsonPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "JSON paths for custom collection"
         }
       }
     }
