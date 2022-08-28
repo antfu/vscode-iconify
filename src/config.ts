@@ -1,9 +1,11 @@
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
 import { computed, reactive, ref } from '@vue/reactivity'
-import { EXT_NAMESPACE } from './meta'
-import { collectionIds, collections, IconsetMeta } from './collections'
 import type { IconifyJSON } from '@iconify/iconify'
+import { EXT_NAMESPACE } from './meta'
+import type { IconsetMeta } from './collections'
+import { collectionIds, collections } from './collections'
+import { Log } from './utils'
 
 const _configState = ref(0)
 
@@ -47,9 +49,27 @@ export const config = reactive({
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
 })
 
-export const customCollections = computed<readonly IconifyJSON[]>(() => {
-  return config.customCollectionJsonPaths.map((path) => fs.readJSONSync(path))
-})
+export const customCollections = ref([] as IconifyJSON[])
+
+export async function LoadCustomCollections() {
+  const result = [] as IconifyJSON[]
+  await config.customCollectionJsonPaths.forEach(async (path: string) => {
+    if (path.includes('*')) {
+      const files = await workspace.findFiles(path)
+      files.forEach(async (file) => {
+        Log.info(`Load custom set from workspace: ${file.fsPath}`)
+        result.push(await fs.readJSON(file.fsPath))
+      })
+    }
+    else {
+      if (await fs.stat(path)) {
+        Log.info(`Load custom set: ${path}`)
+        result.push(await fs.readJSON(path))
+      }
+    }
+  })
+  customCollections.value = result
+}
 
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
@@ -114,8 +134,9 @@ export const REGEX_FULL = computed(() => {
   return new RegExp(`[^\\w\\d]((?:${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]+)`, 'g')
 })
 
-export function onConfigUpdated() {
+export async function onConfigUpdated() {
   _configState.value = +new Date()
+  await LoadCustomCollections()
 }
 
 // First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name

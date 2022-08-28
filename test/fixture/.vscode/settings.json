@@ -1,6 +1,7 @@
 {
   "iconify.color": "#ddd",
-  "iconify.delimiters": [
-    ":"
-  ]
+  "iconify.customCollectionJsonPaths": [
+    "**/custom-collection.json"
+  ],
+  "iconify.delimiters": [":"]
 }

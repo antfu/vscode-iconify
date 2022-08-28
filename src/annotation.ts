@@ -127,8 +127,8 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
       triggerUpdateDecorations(window.activeTextEditor)
   }, null, ctx.subscriptions)
 
-  workspace.onDidChangeConfiguration(() => {
-    onConfigUpdated()
+  workspace.onDidChangeConfiguration(async () => {
+    await onConfigUpdated()
     triggerUpdateDecorations()
   }, null, ctx.subscriptions)
 
