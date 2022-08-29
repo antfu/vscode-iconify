@@ -2,7 +2,6 @@ import type { ExtensionContext } from 'vscode'
 import { MarkdownString } from 'vscode'
 import { DelimitersSeperator, config, enabledCollections } from './config'
 import { getDataURL, getIconInfo } from './loader'
-import { collections } from './collections'
 
 export async function getIconMarkdown(ctx: ExtensionContext, key: string) {
   const info = await getIconInfo(ctx, key)
