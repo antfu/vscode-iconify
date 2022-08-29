@@ -3,5 +3,7 @@
   "iconify.customCollectionJsonPaths": [
     "**/custom-collection.json"
   ],
-  "iconify.delimiters": [":"]
+  "iconify.delimiters": [
+    ":"
+  ]
 }
