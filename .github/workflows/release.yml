@@ -25,6 +25,6 @@ jobs:
       - run: cd dist && npx vsce publish -p ${{secrets.VSCE_TOKEN}} --no-dependencies
         env:
           VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
-      - run: cd dist && npx ovsx publish -p ${{secrets.OVSX_TOKEN}} --no-dependencies
-        env:
-          OVSX_TOKEN: ${{secrets.OVSX_TOKEN}}
+      # - run: cd dist && npx ovsx publish -p ${{secrets.OVSX_TOKEN}} --no-dependencies
+      #   env:
+      #     OVSX_TOKEN: ${{secrets.OVSX_TOKEN}}
