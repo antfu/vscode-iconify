@@ -1,6 +1,6 @@
 import type { ExtensionContext } from 'vscode'
 import { MarkdownString } from 'vscode'
-import { DelimitersSeperator, config } from './config'
+import { DelimitersSeperator, config, enabledCollections } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { collections } from './collections'
 
@@ -16,7 +16,7 @@ export async function getIconMarkdown(ctx: ExtensionContext, key: string) {
 }
 
 export async function getCollectionMarkdown(ctx: ExtensionContext, id: string) {
-  const collection = collections.find(collection => collection.id === id)
+  const collection = enabledCollections.value.find(collection => collection.id === id)
   if (!collection)
     return ''
 

@@ -2,11 +2,10 @@ import raw from './generated/collections'
 
 export interface IconsetMeta {
   id: string
-  name: string
-  author: string
+  name?: string
+  author?: string
   icons: string[]
-  height: number
-  width: number
+  height?: number | number[]
 }
 
 export const collections: IconsetMeta[] = JSON.parse(raw)

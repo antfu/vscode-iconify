@@ -1,7 +1,9 @@
 import { ColorThemeKind, window, workspace } from 'vscode'
+import fs from 'fs-extra'
 import { computed, reactive, ref } from '@vue/reactivity'
 import { EXT_NAMESPACE } from './meta'
-import { collectionIds } from './collections'
+import { collectionIds, collections, IconsetMeta } from './collections'
+import type { IconifyJSON } from '@iconify/iconify'
 
 const _configState = ref(0)
 
@@ -42,13 +44,29 @@ export const config = reactive({
   fontSize: createConfigRef('editor.fontSize', 12),
   languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
   cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://cdn.jsdelivr.net/gh/iconify/icon-sets/json'),
+  customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
 })
 
-export const enabledCollections = computed(() => {
+export const customCollections = computed<readonly IconifyJSON[]>(() => {
+  return config.customCollectionJsonPaths.map((path) => fs.readJSONSync(path))
+})
+
+export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
   const excludes = config.excludes || []
 
-  return includes.filter(i => !excludes.includes(i))
+  return [...includes.filter(i => !excludes.includes(i)), ...customCollections.value.map(c => c.prefix)]
+})
+
+export const enabledCollections = computed<IconsetMeta[]>(() => {
+  const customData: IconsetMeta[] = customCollections.value.map(c => ({
+    id: c.prefix,
+    name: c.info?.name,
+    author: c.info?.author.name,
+    icons: Object.keys(c.icons),
+    height: c.info?.height,
+  }))
+  return [...collections, ...customData]
 })
 
 function verifyCollection(collection: string, str: string) {
@@ -57,7 +75,7 @@ function verifyCollection(collection: string, str: string) {
 }
 
 export function parseIcon(str: string) {
-  const collection = enabledCollections.value.find(i => str.startsWith(i) && verifyCollection(i, str))
+  const collection = enabledCollectionIds.value.find(i => str.startsWith(i) && verifyCollection(i, str))
   if (!collection)
     return
 
@@ -89,11 +107,11 @@ function escapeRegExp(text: string) {
 }
 
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d](${enabledCollections.value.join('|')})${delimiters.value}[\\w-]*$`)
+  return new RegExp(`[^\\w\\d](${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]*$`)
 })
 
 export const REGEX_FULL = computed(() => {
-  return new RegExp(`[^\\w\\d]((?:${enabledCollections.value.join('|')})${delimiters.value}[\\w-]+)`, 'g')
+  return new RegExp(`[^\\w\\d]((?:${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]+)`, 'g')
 })
 
 export function onConfigUpdated() {

@@ -1,8 +1,7 @@
 import type { CompletionItemProvider, ExtensionContext, TextDocument } from 'vscode'
 import { CompletionItem, CompletionItemKind, Position, Range, languages } from 'vscode'
-import { collections } from './collections'
 import { getCollectionMarkdown, getIconMarkdown } from './markdown'
-import { REGEX_NAMESPACE, config, enabledCollections } from './config'
+import { REGEX_NAMESPACE, config, enabledCollectionIds, enabledCollections } from './config'
 
 export function RegisterCompletion(ctx: ExtensionContext) {
   const iconProvider: CompletionItemProvider = {
@@ -13,7 +12,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
         return null
 
       const id = match[1]
-      const info = collections.find(i => i.id === id)
+      const info = enabledCollections.value.find(i => i.id === id)
       if (!info)
         return null
 
@@ -41,7 +40,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
       if (!match)
         return null
 
-      return enabledCollections.value
+      return enabledCollectionIds.value
         .map(c => new CompletionItem(c, CompletionItemKind.Text))
     },
 

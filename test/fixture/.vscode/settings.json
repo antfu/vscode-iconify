@@ -1,4 +1,6 @@
 {
   "iconify.color": "#ddd",
-  "iconify.delimiter": ":"
+  "iconify.delimiters": [
+    ":"
+  ]
 }
