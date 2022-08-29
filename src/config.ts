@@ -1,9 +1,10 @@
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
 import { computed, reactive, ref } from '@vue/reactivity'
-import { EXT_NAMESPACE } from './meta'
-import { collectionIds, collections, IconsetMeta } from './collections'
 import type { IconifyJSON } from '@iconify/iconify'
+import { EXT_NAMESPACE } from './meta'
+import type { IconsetMeta } from './collections'
+import { collectionIds, collections } from './collections'
 
 const _configState = ref(0)
 
@@ -48,7 +49,7 @@ export const config = reactive({
 })
 
 export const customCollections = computed<readonly IconifyJSON[]>(() => {
-  return config.customCollectionJsonPaths.map((path) => fs.readJSONSync(path))
+  return config.customCollectionJsonPaths.map(path => fs.readJSONSync(path))
 })
 
 export const enabledCollectionIds = computed(() => {
