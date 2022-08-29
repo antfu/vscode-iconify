@@ -1,6 +1,6 @@
+import { isAbsolute, resolve } from 'path'
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
-import path from 'path'
 import { computed, reactive, ref } from '@vue/reactivity'
 import type { IconifyJSON } from '@iconify/iconify'
 import { EXT_NAMESPACE } from './meta'
@@ -54,22 +54,40 @@ export const customCollections = ref([] as IconifyJSON[])
 
 export async function LoadCustomCollections() {
   const result = [] as IconifyJSON[]
-  await config.customCollectionJsonPaths.forEach(async (file: string) => {
-    if (workspace?.workspaceFolders) {
-      workspace.workspaceFolders.every(async (folder) => {
-        file = path.resolve(folder.uri.fsPath, file)
-        return !(await fs.pathExists(file))
-      })      
-    }
-    try {
-      if (await fs.stat(file)) {
-        Log.info(`Loaded custom set: ${file}`)
+  const files = Array.from(
+    new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
+      if (isAbsolute(file))
+        return [file]
+
+      const list: string[] = []
+      if (workspace?.workspaceFolders) {
+        for (const folder of workspace.workspaceFolders)
+          list.push(resolve(folder.uri.fsPath, file))
+      }
+      return list
+    })),
+  )
+
+  const existingFiles = files.filter((file) => {
+    const exists = fs.existsSync(file)
+    if (!exists)
+      Log.warning(`Custom collection file does not exist: ${file}`)
+    return exists
+  })
+
+  if (existingFiles.length) {
+    Log.info(`Loading custom collections from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
+
+    await Promise.all(existingFiles.map(async (file) => {
+      try {
         result.push(await fs.readJSON(file))
       }
-    } catch {
-      Log.error(`Problem loading custom set: ${file}`)
-    }
-  })
+      catch {
+        Log.error(`Error on loading custom collection: ${file}`)
+      }
+    }))
+  }
+
   customCollections.value = result
 }
 
