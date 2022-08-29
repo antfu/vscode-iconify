@@ -1,3 +1,4 @@
+import { isAbsolute, resolve } from 'path'
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
 import { computed, reactive, ref } from '@vue/reactivity'
@@ -5,6 +6,7 @@ import type { IconifyJSON } from '@iconify/iconify'
 import { EXT_NAMESPACE } from './meta'
 import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
+import { Log } from './utils'
 
 const _configState = ref(0)
 
@@ -48,9 +50,46 @@ export const config = reactive({
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
 })
 
-export const customCollections = computed<readonly IconifyJSON[]>(() => {
-  return config.customCollectionJsonPaths.map(path => fs.readJSONSync(path))
-})
+export const customCollections = ref([] as IconifyJSON[])
+
+export async function LoadCustomCollections() {
+  const result = [] as IconifyJSON[]
+  const files = Array.from(
+    new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
+      if (isAbsolute(file))
+        return [file]
+
+      const list: string[] = []
+      if (workspace?.workspaceFolders) {
+        for (const folder of workspace.workspaceFolders)
+          list.push(resolve(folder.uri.fsPath, file))
+      }
+      return list
+    })),
+  )
+
+  const existingFiles = files.filter((file) => {
+    const exists = fs.existsSync(file)
+    if (!exists)
+      Log.warning(`Custom collection file does not exist: ${file}`)
+    return exists
+  })
+
+  if (existingFiles.length) {
+    Log.info(`Loading custom collections from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
+
+    await Promise.all(existingFiles.map(async (file) => {
+      try {
+        result.push(await fs.readJSON(file))
+      }
+      catch {
+        Log.error(`Error on loading custom collection: ${file}`)
+      }
+    }))
+  }
+
+  customCollections.value = result
+}
 
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
@@ -115,8 +154,9 @@ export const REGEX_FULL = computed(() => {
   return new RegExp(`[^\\w\\d]((?:${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]+)`, 'g')
 })
 
-export function onConfigUpdated() {
+export async function onConfigUpdated() {
   _configState.value = +new Date()
+  await LoadCustomCollections()
 }
 
 // First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name
