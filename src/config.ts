@@ -1,5 +1,6 @@
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
+import path from 'path'
 import { computed, reactive, ref } from '@vue/reactivity'
 import type { IconifyJSON } from '@iconify/iconify'
 import { EXT_NAMESPACE } from './meta'
@@ -53,19 +54,20 @@ export const customCollections = ref([] as IconifyJSON[])
 
 export async function LoadCustomCollections() {
   const result = [] as IconifyJSON[]
-  await config.customCollectionJsonPaths.forEach(async (path: string) => {
-    if (path.includes('*')) {
-      const files = await workspace.findFiles(path)
-      files.forEach(async (file) => {
-        Log.info(`Load custom set from workspace: ${file.fsPath}`)
-        result.push(await fs.readJSON(file.fsPath))
-      })
+  await config.customCollectionJsonPaths.forEach(async (file: string) => {
+    if (workspace?.workspaceFolders) {
+      workspace.workspaceFolders.every(async (folder) => {
+        file = path.resolve(folder.uri.fsPath, file)
+        return !(await fs.pathExists(file))
+      })      
     }
-    else {
-      if (await fs.stat(path)) {
-        Log.info(`Load custom set: ${path}`)
-        result.push(await fs.readJSON(path))
+    try {
+      if (await fs.stat(file)) {
+        Log.info(`Loaded custom set: ${file}`)
+        result.push(await fs.readJSON(file))
       }
+    } catch {
+      Log.error(`Problem loading custom set: ${file}`)
     }
   })
   customCollections.value = result
