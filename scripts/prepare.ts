@@ -1,27 +1,28 @@
 import path from 'path'
 import fs from 'fs-extra'
+import type { IconifyMetaDataCollection } from '@iconify/json'
+import type { IconifyJSON } from '@iconify/iconify'
+import type { IconsetMeta } from '../src/collections'
 
 const out = path.resolve(__dirname, '../src/generated')
 
 async function prepareJSON() {
   const dir = path.resolve(__dirname, '../node_modules/@iconify/json')
-  const raw = await fs.readJSON(path.join(dir, 'collections.json'))
+  const raw: IconifyMetaDataCollection = await fs.readJSON(path.join(dir, 'collections.json'))
 
   const collections = Object.entries(raw).map(([id, v]) => ({
     ...(v as any),
     id,
   }))
 
-  const collectionsMeta = []
+  const collectionsMeta: IconsetMeta[] = []
 
   for (const info of collections) {
-    const setData = await fs.readJSON(path.join(dir, 'json', `${info.id}.json`))
+    const setData: IconifyJSON = await fs.readJSON(path.join(dir, 'json', `${info.id}.json`))
 
     const icons = Object.keys(setData.icons)
-    const categories = setData.categories
-    const meta = { ...info, icons, categories }
-    delete meta.samples
-    delete meta.categories
+    const { id, name, author, height } = info
+    const meta = { author: author.name, height, name, id, icons }
     collectionsMeta.push(meta)
   }
 
