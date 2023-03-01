@@ -8,7 +8,6 @@
 <a href="https://marketplace.visualstudio.com/items?itemName=antfu.iconify" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/v/antfu.iconify.svg?color=blue&amp;label=VS%20Code%20Marketplace&logo=visual-studio-code" alt="Visual Studio Marketplace Version" /></a>
 <a href="https://marketplace.visualstudio.com/items?itemName=antfu.iconify" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/d/antfu.iconify.svg?color=4bdbe3" alt="Visual Studio Marketplace Downloads" /></a>
 <a href="https://marketplace.visualstudio.com/items?itemName=antfu.iconify" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/i/antfu.iconify.svg?color=63ba83" alt="Visual Studio Marketplace Installs" /></a>
-<a href="https://marketplace.visualstudio.com/items?itemName=antfu.iconify" target="__blank"><img src="https://vsmarketplacebadge.apphb.com/trending-monthly/antfu.iconify.svg?color=a1b858" alt="Marketplace Trending Monthly" /></a>
 <br/>
 <a href="https://github.com/antfu/vscode-iconify" target="__blank"><img src="https://img.shields.io/github/last-commit/antfu/vscode-iconify.svg?color=c977be" alt="GitHub last commit" /></a>
 <a href="https://github.com/antfu/vscode-iconify/issues" target="__blank"><img src="https://img.shields.io/github/issues/antfu/vscode-iconify.svg?color=a38eed" alt="GitHub issues" /></a>
