@@ -6,6 +6,7 @@ export interface IconsetMeta {
   author?: string
   icons: string[]
   height?: number | number[]
+  license?: string
 }
 
 export const collections: IconsetMeta[] = JSON.parse(raw)
