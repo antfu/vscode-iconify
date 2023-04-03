@@ -21,8 +21,8 @@ async function prepareJSON() {
     const setData: IconifyJSON = await fs.readJSON(path.join(dir, 'json', `${info.id}.json`))
 
     const icons = Object.keys(setData.icons)
-    const { id, name, author, height } = info
-    const meta = { author: author.name, height, name, id, icons }
+    const { id, name, author, height, license } = info
+    const meta = { author: author.name, height, name, id, icons, license: license.spdk }
     collectionsMeta.push(meta)
   }
 
