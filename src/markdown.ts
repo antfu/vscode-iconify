@@ -10,7 +10,7 @@ export async function getIconMarkdown(ctx: ExtensionContext, key: string) {
 
   const icon = await getDataURL(ctx, info, 150)
   const setId = key.split(DelimitersSeperator.value)[0]
-  const url = `https://icones.netlify.app/collection/${setId}`
+  const url = `https://icones.js.org/collection/${setId}`
   const collection = enabledCollections.value.find(collection => collection.id === setId)
   return new MarkdownString(`| |\n|:---:|\n| ![](${icon}) |\n| [\`${key}\`](${url}) |\n\n${collection?.license ?? ''}`)
 }
@@ -24,6 +24,6 @@ export async function getCollectionMarkdown(ctx: ExtensionContext, id: string) {
   const icons = await Promise.all(iconKeys.map(key => getDataURL(ctx, [id, key].join(config.delimiters[0]), 24)))
   const iconsMarkdown = icons.map(icon => `![](${icon})`).join('  ')
 
-  const url = `https://icones.netlify.app/collection/${collection.id}`
+  const url = `https://icones.js.org/collection/${collection.id}`
   return new MarkdownString(`#### [${collection.name}](${url})\n${collection.author}\n\n${iconsMarkdown}\n\n${collection.license ?? ''}`)
 }
