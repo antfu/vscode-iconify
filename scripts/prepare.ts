@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import fs from 'fs-extra'
 import type { IconifyMetaDataCollection } from '@iconify/json'
 import type { IconifyJSON } from '@iconify/iconify'
@@ -26,7 +26,7 @@ async function prepareJSON() {
     collectionsMeta.push(meta)
   }
 
-  const collectionsIds = collectionsMeta.map(i => i.id)
+  const collectionsIds = collectionsMeta.map(i => i.id).sort()
 
   const pkg = await fs.readJSON('./package.json')
   pkg.contributes.configuration.properties['iconify.includes'].items.enum = collectionsIds

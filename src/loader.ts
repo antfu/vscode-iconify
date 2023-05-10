@@ -10,7 +10,7 @@ const LoadedIconSets: Record<string, IconifyJSON> = {}
 const dataURLCache: Record<string, string> = {}
 
 let _tasks: Record<string, Promise<any>> = {}
-export const UniqPromise = <T>(fn: (ctx: ExtensionContext, id: string) => Promise<T>) => {
+export function UniqPromise<T>(fn: (ctx: ExtensionContext, id: string) => Promise<T>) {
   return async (ctx: ExtensionContext, id: string) => {
     if (!_tasks[id])
       _tasks[id] = fn(ctx, id)

@@ -1,4 +1,4 @@
-import { isAbsolute, resolve } from 'path'
+import { isAbsolute, resolve } from 'node:path'
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
 import { computed, reactive, ref } from '@vue/reactivity'
