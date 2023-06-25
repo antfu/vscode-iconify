@@ -37,10 +37,14 @@ export function clearCache(ctx: ExtensionContext) {
 }
 
 async function writeIconCache(ctx: ExtensionContext, iconId: string, data: IconifyJSON) {
-  await workspace.fs.writeFile(
-    getCacheUriForIcon(ctx, iconId),
-    Buffer.from(JSON.stringify(data)),
-  )
+  try {
+    await workspace.fs.writeFile(
+      getCacheUriForIcon(ctx, iconId),
+      Buffer.from(JSON.stringify(data)),
+      )
+  } catch (e) {
+    Log.error(e)
+  }
 }
 
 async function loadIconCache(ctx: ExtensionContext, iconId: string): Promise<IconifyJSON | undefined> {
