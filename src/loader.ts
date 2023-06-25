@@ -1,6 +1,8 @@
+import { Buffer } from 'node:buffer'
 import type { IconifyIcon, IconifyJSON } from '@iconify/iconify'
 import { $fetch } from 'ohmyfetch'
 import type { ExtensionContext } from 'vscode'
+import { Uri, workspace } from 'vscode'
 import { pathToSvg, toDataUrl } from './utils/svgs'
 import { Log } from './utils'
 import { color, config, customCollections, parseIcon } from './config'
@@ -18,20 +20,43 @@ export function UniqPromise<T>(fn: (ctx: ExtensionContext, id: string) => Promis
   }
 }
 
+function getCacheUri(ctx: ExtensionContext) {
+  return Uri.joinPath(ctx.globalStorageUri, 'icon-set-cache')
+}
+
+function getCacheUriForIcon(ctx: ExtensionContext, iconId: string) {
+  return Uri.joinPath(getCacheUri(ctx), `${iconId}.json`)
+}
+
 export function clearCache(ctx: ExtensionContext) {
-  for (const id of collectionIds) {
+  _tasks = {}
+  workspace.fs.delete(getCacheUri(ctx))
+  // Remove old entries
+  for (const id of collectionIds)
     ctx.globalState.update(`icons-${id}`, undefined)
-    _tasks = {}
+}
+
+async function writeIconCache(ctx: ExtensionContext, iconId: string, data: IconifyJSON) {
+  await workspace.fs.writeFile(
+    getCacheUriForIcon(ctx, iconId),
+    Buffer.from(JSON.stringify(data)),
+  )
+}
+
+async function loadIconCache(ctx: ExtensionContext, iconId: string): Promise<IconifyJSON | undefined> {
+  try {
+    const buffer = await workspace.fs.readFile(getCacheUriForIcon(ctx, iconId))
+    return JSON.parse(buffer.toString())
   }
+  catch (_) {}
 }
 
 export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string) => {
   let data: IconifyJSON = LoadedIconSets[id] || customCollections.value.find(c => c.prefix === id)
 
   if (!data) {
-    const key = `icons-${id}`
-    const cached = ctx.globalState.get(key) as IconifyJSON | undefined
-    if (cached && cached?.icons) {
+    const cached = await loadIconCache(ctx, id)
+    if (cached?.icons) {
       LoadedIconSets[id] = cached
       data = cached
       Log.info(`✅ [${id}] Loaded from disk`)
@@ -42,8 +67,8 @@ export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string)
         Log.info(`☁️ [${id}] Downloading from ${url}`)
         data = await $fetch(url)
         Log.info(`✅ [${id}] Downloaded`)
-        ctx.globalState.update(key, data)
-        LoadedIconSets[id] = data!
+        writeIconCache(ctx, id, data)
+        LoadedIconSets[id] = data
       }
       catch (e) {
         Log.error(e, true)
