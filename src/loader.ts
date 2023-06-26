@@ -66,6 +66,7 @@ async function migrateCache(ctx: ExtensionContext) {
       LoadedIconSets[iconSetId] = cached
       await writeCache(ctx, iconSetId, cached)
       ctx.globalState.update(key, undefined)
+      Log.info(`🔀 [${iconSetId}] Migrated iconset to new storage`)
     }
   }
 }
