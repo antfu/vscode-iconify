@@ -1,10 +1,11 @@
+import { Buffer } from 'node:buffer'
 import type { IconifyIcon, IconifyJSON } from '@iconify/iconify'
 import { $fetch } from 'ohmyfetch'
 import type { ExtensionContext } from 'vscode'
+import { Uri, workspace } from 'vscode'
 import { pathToSvg, toDataUrl } from './utils/svgs'
 import { Log } from './utils'
 import { color, config, customCollections, parseIcon } from './config'
-import { collectionIds } from './collections'
 
 const LoadedIconSets: Record<string, IconifyJSON> = {}
 const dataURLCache: Record<string, string> = {}
@@ -18,20 +19,66 @@ export function UniqPromise<T>(fn: (ctx: ExtensionContext, id: string) => Promis
   }
 }
 
+function getCacheUri(ctx: ExtensionContext) {
+  return Uri.joinPath(ctx.globalStorageUri, 'icon-set-cache')
+}
+
+function getCacheUriForIconSet(ctx: ExtensionContext, iconSetId: string) {
+  return Uri.joinPath(getCacheUri(ctx), `${iconSetId}.json`)
+}
+
 export function clearCache(ctx: ExtensionContext) {
-  for (const id of collectionIds) {
-    ctx.globalState.update(`icons-${id}`, undefined)
-    _tasks = {}
+  _tasks = {}
+  workspace.fs.delete(getCacheUri(ctx))
+  // clear legacy cache
+  for (const id of ctx.globalState.keys()) {
+    if (id.startsWith('icons-'))
+      ctx.globalState.update(id, undefined)
+  }
+}
+
+async function writeCache(ctx: ExtensionContext, iconSetId: string, data: IconifyJSON) {
+  try {
+    await workspace.fs.writeFile(
+      getCacheUriForIconSet(ctx, iconSetId),
+      Buffer.from(JSON.stringify(data)),
+    )
+  }
+  catch (e) {
+    Log.error(e)
+  }
+}
+
+async function loadCache(ctx: ExtensionContext, iconSetId: string): Promise<IconifyJSON | undefined> {
+  try {
+    const buffer = await workspace.fs.readFile(getCacheUriForIconSet(ctx, iconSetId))
+    return JSON.parse(buffer.toString())
+  }
+  catch (_) {}
+}
+
+async function migrateCache(ctx: ExtensionContext) {
+  const prefix = 'icons-'
+  for (const key of ctx.globalState.keys()) {
+    if (key.startsWith(prefix)) {
+      const cached = ctx.globalState.get<IconifyJSON>(key)!
+      const iconSetId = key.slice(prefix.length)
+      LoadedIconSets[iconSetId] = cached
+      await writeCache(ctx, iconSetId, cached)
+      ctx.globalState.update(key, undefined)
+      Log.info(`🔀 [${iconSetId}] Migrated iconset to new storage`)
+    }
   }
 }
 
 export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string) => {
+  await migrateCache(ctx)
+
   let data: IconifyJSON = LoadedIconSets[id] || customCollections.value.find(c => c.prefix === id)
 
   if (!data) {
-    const key = `icons-${id}`
-    const cached = ctx.globalState.get(key) as IconifyJSON | undefined
-    if (cached && cached?.icons) {
+    const cached = await loadCache(ctx, id)
+    if (cached) {
       LoadedIconSets[id] = cached
       data = cached
       Log.info(`✅ [${id}] Loaded from disk`)
@@ -42,8 +89,8 @@ export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string)
         Log.info(`☁️ [${id}] Downloading from ${url}`)
         data = await $fetch(url)
         Log.info(`✅ [${id}] Downloaded`)
-        ctx.globalState.update(key, data)
-        LoadedIconSets[id] = data!
+        LoadedIconSets[id] = data
+        writeCache(ctx, id, data)
       }
       catch (e) {
         Log.error(e, true)
