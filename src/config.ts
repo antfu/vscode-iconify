@@ -41,7 +41,7 @@ export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
   color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
-  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '-', '/']),
+  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, ['::', '--', '//', '@@', ':', '-', '/', '@']),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
@@ -109,9 +109,12 @@ export const enabledCollections = computed<IconsetMeta[]>(() => {
   return [...collections, ...customData]
 })
 
+export const delimiters = computed(() => `(${escapeRegExp(config.delimiters.join('@delim@')).replace(/@delim@/g, '|')})`)
+export const DelimitersSeperator = computed(() => new RegExp(delimiters.value, 'g'))
+const startingDelim = new RegExp(`^${delimiters.value}`)
+
 function verifyCollection(collection: string, str: string) {
-  const separated = str[collection.length]
-  return config.delimiters.includes(separated)
+  return startingDelim.test(str.replace(collection, ''))
 }
 
 export function parseIcon(str: string) {
@@ -119,20 +122,12 @@ export function parseIcon(str: string) {
   if (!collection)
     return
 
-  if (!config.delimiters.includes(str[collection.length]))
-    return
-
-  const icon = str.slice(collection.length + 1)
-
+  const icon = str.replace(collection, '').replace(startingDelim, '')
   if (!icon)
     return
 
   return { collection, icon }
 }
-
-export const delimiters = computed(() => `[${escapeRegExp(config.delimiters.join(''))}]`)
-
-export const DelimitersSeperator = computed(() => new RegExp(delimiters.value, 'g'))
 
 export const color = computed(() => {
   return config.color === 'auto'
