@@ -4,7 +4,8 @@
   "displayName": "Iconify IntelliSense",
   "version": "0.5.4",
   "private": true,
-  "packageManager": "pnpm@8.6.5",
+  "type": "commonjs",
+  "packageManager": "pnpm@8.6.11",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "license": "MIT",
   "homepage": "https://github.com/antfu/vscode-iconify",
@@ -104,11 +105,31 @@
           "default": [
             ":",
             "--",
-            "-",
-            "/"
-     
+            "-"
           ],
           "description": "Delimiters for separating between collection id and icon id"
+        },
+        "iconify.prefixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "",
+            "i-"
+          ],
+          "description": "Prefixes for matching"
+        },
+        "iconify.suffixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "",
+            "i-"
+          ],
+          "description": "Suffixes for matching"
         },
         "iconify.languageIds": {
           "type": "array",
@@ -485,20 +506,20 @@
     "release": "bumpp --tag --push --commit"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.39.5",
+    "@antfu/eslint-config": "^0.39.8",
     "@iconify/iconify": "^3.1.1",
-    "@iconify/json": "^2.2.83",
+    "@iconify/json": "^2.2.96",
     "@types/fs-extra": "^11.0.1",
-    "@types/node": "^20.3.1",
-    "@types/vscode": "^1.79.1",
-    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@types/node": "^20.4.5",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@vue/reactivity": "^3.3.4",
     "bumpp": "^9.1.1",
-    "eslint": "^8.43.0",
-    "esno": "^0.16.3",
+    "eslint": "^8.46.0",
+    "esno": "^0.17.0",
     "fs-extra": "^11.1.1",
     "ohmyfetch": "^0.4.21",
     "tsup": "^7.1.0",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.6"
   }
 }

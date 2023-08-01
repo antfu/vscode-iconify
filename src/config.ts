@@ -37,15 +37,21 @@ function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
   })
 }
 
+function escapeRegExp(text: string) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+}
+
 export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
   color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
-  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '--', '-', '/']),
+  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '--', '-']),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
   languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
+  prefixes: createConfigRef(`${EXT_NAMESPACE}.prefixes`, ['', 'i-']),
+  suffixes: createConfigRef(`${EXT_NAMESPACE}.suffixes`, ['']),
   cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://cdn.jsdelivr.net/gh/iconify/icon-sets/json'),
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
 })
@@ -109,20 +115,48 @@ export const enabledCollections = computed<IconsetMeta[]>(() => {
   return [...collections, ...customData]
 })
 
-export const delimiters = computed(() => `(${escapeRegExp(config.delimiters.join('@delim@')).replace(/@delim@/g, '|')})`)
-export const DelimitersSeperator = computed(() => new RegExp(delimiters.value, 'g'))
-const startingDelim = new RegExp(`^${delimiters.value}`)
+const RE_PART_DELIMITERS = computed(() => `(${config.delimiters.map(i => escapeRegExp(i)).join('|')})`)
+
+const RE_PART_PREFIXES = computed(() => {
+  if (!config.prefixes.filter(Boolean).length)
+    return ''
+  const empty = config.prefixes.includes('')
+  return `(?:${config.prefixes.filter(Boolean)
+    .map(i => escapeRegExp(i))
+    .join('|')})${empty ? '?' : ''}`
+})
+
+const RE_PART_SUFFIXES = computed(() => {
+  if (!config.suffixes.filter(Boolean).length)
+    return ''
+  const empty = config.suffixes.includes('')
+  return `(?:${config.suffixes.filter(Boolean)
+    .map(i => escapeRegExp(i))
+    .join('|')})${empty ? '?' : ''}`
+})
+
+export const REGEX_DELIMITERS = computed(() => new RegExp(RE_PART_DELIMITERS.value, 'g'))
+
+export const REGEX_NAMESPACE = computed(() => {
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]*$`, 'g')
+})
+
+export const REGEX_FULL = computed(() => {
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}((?:${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]+)${RE_PART_SUFFIXES.value}`, 'g')
+})
+
+const REGEX_STARTING_DELIMITERS = computed(() => new RegExp(`^${RE_PART_DELIMITERS.value}`, 'g'))
 
 function verifyCollection(collection: string, str: string) {
-  return startingDelim.test(str.replace(collection, ''))
+  return str.startsWith(collection) && REGEX_STARTING_DELIMITERS.value.test(str.slice(collection.length))
 }
 
 export function parseIcon(str: string) {
-  const collection = enabledCollectionIds.value.find(i => str.startsWith(i) && verifyCollection(i, str))
+  const collection = enabledCollectionIds.value.find(c => verifyCollection(c, str))
   if (!collection)
     return
 
-  const icon = str.replace(collection, '').replace(startingDelim, '')
+  const icon = str.slice(collection.length).replace(REGEX_STARTING_DELIMITERS.value, '')
   if (!icon)
     return
 
@@ -135,18 +169,6 @@ export const color = computed(() => {
       ? '#eee'
       : '#222'
     : config.color
-})
-
-function escapeRegExp(text: string) {
-  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-}
-
-export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d](${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]*$`)
-})
-
-export const REGEX_FULL = computed(() => {
-  return new RegExp(`[^\\w\\d]((?:${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]+)`, 'g')
 })
 
 export async function onConfigUpdated() {

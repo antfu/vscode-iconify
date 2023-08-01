@@ -1,6 +1,6 @@
 import type { ExtensionContext } from 'vscode'
 import { MarkdownString } from 'vscode'
-import { DelimitersSeperator, config, enabledCollections } from './config'
+import { REGEX_DELIMITERS, config, enabledCollections } from './config'
 import { getDataURL, getIconInfo } from './loader'
 
 export async function getIconMarkdown(ctx: ExtensionContext, key: string) {
@@ -9,7 +9,7 @@ export async function getIconMarkdown(ctx: ExtensionContext, key: string) {
     return ''
 
   const icon = await getDataURL(ctx, info, 150)
-  const setId = key.split(DelimitersSeperator.value)[0]
+  const setId = key.split(REGEX_DELIMITERS.value)[0]
   const url = `https://icones.js.org/collection/${setId}`
   const collection = enabledCollections.value.find(collection => collection.id === setId)
   return new MarkdownString(`| |\n|:---:|\n| ![](${icon}) |\n| [\`${key}\`](${url}) |\n\n${collection?.license ?? ''}`)

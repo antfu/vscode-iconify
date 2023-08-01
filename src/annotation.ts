@@ -45,7 +45,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
         continue
 
       const startPos = editor.document.positionAt(match.index + 1)
-      const endPos = editor.document.positionAt(match.index + key.length + 1)
+      const endPos = editor.document.positionAt(match.index + match[0].length)
       keys.push([new Range(startPos, endPos), key])
     }
 
