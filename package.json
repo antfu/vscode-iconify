@@ -2,7 +2,7 @@
   "publisher": "antfu",
   "name": "iconify",
   "displayName": "Iconify IntelliSense",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "private": true,
   "type": "commonjs",
   "packageManager": "pnpm@8.6.11",
