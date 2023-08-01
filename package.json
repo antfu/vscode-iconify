@@ -4,7 +4,7 @@
   "displayName": "Iconify IntelliSense",
   "version": "0.5.4",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "packageManager": "pnpm@8.6.11",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "license": "MIT",
@@ -107,6 +107,28 @@
             "-"
           ],
           "description": "Delimiters for separating between collection id and icon id"
+        },
+        "iconify.prefixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "",
+            "i-"
+          ],
+          "description": "Prefixes for matching"
+        },
+        "iconify.suffixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "",
+            "i-"
+          ],
+          "description": "Suffixes for matching"
         },
         "iconify.languageIds": {
           "type": "array",

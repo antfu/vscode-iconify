@@ -41,11 +41,13 @@ export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
   color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
-  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '-', '/']),
+  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '-']),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
   languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
+  prefixes: createConfigRef(`${EXT_NAMESPACE}.prefixes`, ['', 'i-']),
+  suffixes: createConfigRef(`${EXT_NAMESPACE}.suffixes`, ['']),
   cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://cdn.jsdelivr.net/gh/iconify/icon-sets/json'),
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
 })
@@ -146,12 +148,30 @@ function escapeRegExp(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
+const suffixesRE = computed(() => {
+  if (!config.suffixes.filter(Boolean).length)
+    return ''
+  const empty = config.suffixes.includes('')
+  return `(?:${config.suffixes.filter(Boolean)
+    .map(i => escapeRegExp(i))
+    .join('|')})${empty ? '?' : ''}`
+})
+
+const prefixesRE = computed(() => {
+  if (!config.prefixes.filter(Boolean).length)
+    return ''
+  const empty = config.prefixes.includes('')
+  return `(?:${config.prefixes.filter(Boolean)
+    .map(i => escapeRegExp(i))
+    .join('|')})${empty ? '?' : ''}`
+})
+
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d](${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]*$`)
+  return new RegExp(`[^\\w\\d]${prefixesRE.value}(${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]*$`)
 })
 
 export const REGEX_FULL = computed(() => {
-  return new RegExp(`[^\\w\\d]((?:${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]+)`, 'g')
+  return new RegExp(`[^\\w\\d]${prefixesRE.value}((?:${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]+)${suffixesRE.value}`, 'g')
 })
 
 export async function onConfigUpdated() {
