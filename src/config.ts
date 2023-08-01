@@ -37,11 +37,15 @@ function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
   })
 }
 
+function escapeRegExp(text: string) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+}
+
 export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
   color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
-  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '-']),
+  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '--', '-']),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
   excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
   fontSize: createConfigRef('editor.fontSize', 12),
@@ -111,53 +115,9 @@ export const enabledCollections = computed<IconsetMeta[]>(() => {
   return [...collections, ...customData]
 })
 
-function verifyCollection(collection: string, str: string) {
-  const separated = str[collection.length]
-  return config.delimiters.includes(separated)
-}
+const RE_PART_DELIMITERS = computed(() => `(${config.delimiters.map(i => escapeRegExp(i)).join('|')})`)
 
-export function parseIcon(str: string) {
-  const collection = enabledCollectionIds.value.find(i => str.startsWith(i) && verifyCollection(i, str))
-  if (!collection)
-    return
-
-  if (!config.delimiters.includes(str[collection.length]))
-    return
-
-  const icon = str.slice(collection.length + 1)
-
-  if (!icon)
-    return
-
-  return { collection, icon }
-}
-
-export const delimiters = computed(() => `[${escapeRegExp(config.delimiters.join(''))}]`)
-
-export const DelimitersSeperator = computed(() => new RegExp(delimiters.value, 'g'))
-
-export const color = computed(() => {
-  return config.color === 'auto'
-    ? isDarkTheme()
-      ? '#eee'
-      : '#222'
-    : config.color
-})
-
-function escapeRegExp(text: string) {
-  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-}
-
-const suffixesRE = computed(() => {
-  if (!config.suffixes.filter(Boolean).length)
-    return ''
-  const empty = config.suffixes.includes('')
-  return `(?:${config.suffixes.filter(Boolean)
-    .map(i => escapeRegExp(i))
-    .join('|')})${empty ? '?' : ''}`
-})
-
-const prefixesRE = computed(() => {
+const RE_PART_PREFIXES = computed(() => {
   if (!config.prefixes.filter(Boolean).length)
     return ''
   const empty = config.prefixes.includes('')
@@ -166,12 +126,49 @@ const prefixesRE = computed(() => {
     .join('|')})${empty ? '?' : ''}`
 })
 
+const RE_PART_SUFFIXES = computed(() => {
+  if (!config.suffixes.filter(Boolean).length)
+    return ''
+  const empty = config.suffixes.includes('')
+  return `(?:${config.suffixes.filter(Boolean)
+    .map(i => escapeRegExp(i))
+    .join('|')})${empty ? '?' : ''}`
+})
+
+export const REGEX_DELIMITERS = computed(() => new RegExp(RE_PART_DELIMITERS.value, 'g'))
+
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d]${prefixesRE.value}(${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]*$`)
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]*$`, 'g')
 })
 
 export const REGEX_FULL = computed(() => {
-  return new RegExp(`[^\\w\\d]${prefixesRE.value}((?:${enabledCollectionIds.value.join('|')})${delimiters.value}[\\w-]+)${suffixesRE.value}`, 'g')
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}((?:${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]+)${RE_PART_SUFFIXES.value}`, 'g')
+})
+
+const REGEX_STARTING_DELIMITERS = computed(() => new RegExp(`^${RE_PART_DELIMITERS.value}`, 'g'))
+
+function verifyCollection(collection: string, str: string) {
+  return str.startsWith(collection) && REGEX_STARTING_DELIMITERS.value.test(str.slice(collection.length))
+}
+
+export function parseIcon(str: string) {
+  const collection = enabledCollectionIds.value.find(c => verifyCollection(c, str))
+  if (!collection)
+    return
+
+  const icon = str.slice(collection.length).replace(REGEX_STARTING_DELIMITERS.value, '')
+  if (!icon)
+    return
+
+  return { collection, icon }
+}
+
+export const color = computed(() => {
+  return config.color === 'auto'
+    ? isDarkTheme()
+      ? '#eee'
+      : '#222'
+    : config.color
 })
 
 export async function onConfigUpdated() {
