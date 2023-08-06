@@ -484,7 +484,7 @@
         },
         "iconify.cdnEntry": {
           "type": "string",
-          "default": "https://cdn.jsdelivr.net/gh/iconify/icon-sets/json",
+          "default": "https://icones.js.org/collections",
           "description": "CDN entry of iconify icon-sets"
         },
         "iconify.customCollectionJsonPaths": {

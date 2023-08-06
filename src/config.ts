@@ -52,7 +52,7 @@ export const config = reactive({
   languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
   prefixes: createConfigRef(`${EXT_NAMESPACE}.prefixes`, ['', 'i-']),
   suffixes: createConfigRef(`${EXT_NAMESPACE}.suffixes`, ['']),
-  cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://cdn.jsdelivr.net/gh/iconify/icon-sets/json'),
+  cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://icones.js.org/collections'),
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
 })
 

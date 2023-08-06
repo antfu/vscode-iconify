@@ -7,8 +7,8 @@ import { pathToSvg, toDataUrl } from './utils/svgs'
 import { Log } from './utils'
 import { color, config, customCollections, parseIcon } from './config'
 
-const LoadedIconSets: Record<string, IconifyJSON> = {}
-const dataURLCache: Record<string, string> = {}
+let loadedIconSets: Record<string, IconifyJSON> = {}
+let dataURLCache: Record<string, string> = {}
 
 let _tasks: Record<string, Promise<any>> = {}
 export function UniqPromise<T>(fn: (ctx: ExtensionContext, id: string) => Promise<T>) {
@@ -27,14 +27,19 @@ function getCacheUriForIconSet(ctx: ExtensionContext, iconSetId: string) {
   return Uri.joinPath(getCacheUri(ctx), `${iconSetId}.json`)
 }
 
-export function clearCache(ctx: ExtensionContext) {
+export async function clearCache(ctx: ExtensionContext) {
   _tasks = {}
-  workspace.fs.delete(getCacheUri(ctx))
+  await workspace.fs.delete(getCacheUri(ctx), { recursive: true })
+
   // clear legacy cache
   for (const id of ctx.globalState.keys()) {
     if (id.startsWith('icons-'))
       ctx.globalState.update(id, undefined)
   }
+
+  loadedIconSets = {}
+  dataURLCache = {}
+  Log.info('🗑️ Cleared all cache')
 }
 
 async function writeCache(ctx: ExtensionContext, iconSetId: string, data: IconifyJSON) {
@@ -63,7 +68,7 @@ async function migrateCache(ctx: ExtensionContext) {
     if (key.startsWith(prefix)) {
       const cached = ctx.globalState.get<IconifyJSON>(key)!
       const iconSetId = key.slice(prefix.length)
-      LoadedIconSets[iconSetId] = cached
+      loadedIconSets[iconSetId] = cached
       await writeCache(ctx, iconSetId, cached)
       ctx.globalState.update(key, undefined)
       Log.info(`🔀 [${iconSetId}] Migrated iconset to new storage`)
@@ -74,22 +79,22 @@ async function migrateCache(ctx: ExtensionContext) {
 export const LoadIconSet = UniqPromise(async (ctx: ExtensionContext, id: string) => {
   await migrateCache(ctx)
 
-  let data: IconifyJSON = LoadedIconSets[id] || customCollections.value.find(c => c.prefix === id)
+  let data: IconifyJSON = loadedIconSets[id] || customCollections.value.find(c => c.prefix === id)
 
   if (!data) {
     const cached = await loadCache(ctx, id)
     if (cached) {
-      LoadedIconSets[id] = cached
+      loadedIconSets[id] = cached
       data = cached
       Log.info(`✅ [${id}] Loaded from disk`)
     }
     else {
       try {
         const url = `${config.cdnEntry}/${id}.json`
-        Log.info(`☁️ [${id}] Downloading from ${url}`)
+        Log.info(`⏳ [${id}] Downloading from ${url}`)
         data = await $fetch(url)
         Log.info(`✅ [${id}] Downloaded`)
-        LoadedIconSets[id] = data
+        loadedIconSets[id] = data
         writeCache(ctx, id, data)
       }
       catch (e) {
