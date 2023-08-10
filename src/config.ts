@@ -138,7 +138,7 @@ const RE_PART_SUFFIXES = computed(() => {
 export const REGEX_DELIMITERS = computed(() => new RegExp(RE_PART_DELIMITERS.value, 'g'))
 
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]*$`, 'g')
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]*$`)
 })
 
 export const REGEX_FULL = computed(() => {
