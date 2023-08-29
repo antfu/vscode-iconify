@@ -24,19 +24,9 @@
 ### Features
 
 - Inline display corresponding icons
-- Auto completions for iconsets
+- Auto-completion for icon-sets
 - Hover
 - Snippets
-
-### TODO
-
-- ✅ Config/command to toggle display
-- ✅ Change Icon color for Dark/Light theme
-- ✅ Config for customize color
-- ✅ Config to enable/disable some collections
-- ✅ Config for delimiters
-- Collection rename mapping
-
 
 ## License
 
