@@ -86,6 +86,15 @@
           "default": true,
           "description": "Enabled Iconify inline annotations"
         },
+        "iconify.position": {
+          "type": "string",
+          "enum": [
+            "before",
+            "after"
+          ],
+          "default": "before",
+          "description": "Position the icon before or after the icon name"
+        },
         "iconify.color": {
           "type": "string",
           "default": "auto",

@@ -54,12 +54,13 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
       if (!info)
         return undefined
 
+      const position = config.position === 'after' ? 'after' : 'before'
       const dataurl = await getDataURL(ctx, info, config.fontSize * 1.2)
 
       const item: DecorationMatch = {
         range,
         renderOptions: {
-          before: {
+          [position]: {
             contentIconPath: Uri.parse(dataurl),
             margin: `-${config.fontSize}px 2px; transform: translate(-2px, 3px);`,
             width: `${config.fontSize * info.ratio * 1.1}px`,
