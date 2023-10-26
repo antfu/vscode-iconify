@@ -59,7 +59,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
       const item: DecorationMatch = {
         range,
         renderOptions: {
-          before: {
+          [config.position]: {
             contentIconPath: Uri.parse(dataurl),
             margin: `-${config.fontSize}px 2px; transform: translate(-2px, 3px);`,
             width: `${config.fontSize * info.ratio * 1.1}px`,

@@ -44,6 +44,7 @@ function escapeRegExp(text: string) {
 export const config = reactive({
   inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
   annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
+  position: createConfigRef(`${EXT_NAMESPACE}.position`, 'before'),
   color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
   delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '--', '-', '/']),
   includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
