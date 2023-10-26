@@ -63,7 +63,8 @@ export function RegisterCompletion(ctx: ExtensionContext) {
     languages.registerCompletionItemProvider(
       config.languageIds,
       collectionProvider,
-      '"', '\'',
+      '"',
+      '\'',
     ),
   )
 }
