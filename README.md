@@ -20,7 +20,6 @@
   <img src="https://github.com/antfu/vscode-iconify/blob/main/screenshots/preview-1.png?raw=true" alt='preview'>
 </p>
 
-
 ### Features
 
 - Inline display corresponding icons
