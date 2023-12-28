@@ -24,7 +24,7 @@ jobs:
       - run: npx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - run: yarn run build
+      - run: pnpm run build
       - run: cd dist && npx vsce publish -p ${{secrets.VSCE_TOKEN}} --no-dependencies
         env:
           VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
