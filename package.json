@@ -503,6 +503,11 @@
           },
           "default": [],
           "description": "JSON paths for custom collection"
+        },
+        "iconify.customCollectionIdsMap": {
+          "type": "object",
+          "default": {},
+          "description": "Collection IDs Map for collection name alias, e.g. { 'mc': 'mingcute' }"
         }
       }
     }

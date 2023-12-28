@@ -55,6 +55,7 @@ export const config = reactive({
   suffixes: createConfigRef(`${EXT_NAMESPACE}.suffixes`, ['']),
   cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://icones.js.org/collections'),
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
+  customCollectionIdsMap: createConfigRef(`${EXT_NAMESPACE}.customCollectionIdsMap`, {} as Record<string, string | undefined>),
 })
 
 export const customCollections = ref([] as IconifyJSON[])
@@ -102,7 +103,11 @@ export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
   const excludes = config.excludes || []
 
-  return [...includes.filter(i => !excludes.includes(i)), ...customCollections.value.map(c => c.prefix)]
+  return [
+    ...includes.filter(i => !excludes.includes(i)),
+    ...(Object.keys(config.customCollectionIdsMap)),
+    ...customCollections.value.map(c => c.prefix),
+  ]
 })
 
 export const enabledCollections = computed<IconsetMeta[]>(() => {
@@ -161,7 +166,7 @@ export function parseIcon(str: string) {
   if (!icon)
     return
 
-  return { collection, icon }
+  return { collection: config.customCollectionIdsMap[collection] ?? collection, icon }
 }
 
 export const color = computed(() => {
