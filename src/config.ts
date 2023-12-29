@@ -185,8 +185,11 @@ export async function onConfigUpdated() {
 // First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name
 function isDarkTheme() {
   const themeKind = window?.activeColorTheme?.kind
-  if (themeKind && themeKind === ColorThemeKind?.Dark)
+  if (themeKind && (themeKind === ColorThemeKind?.Dark || themeKind === ColorThemeKind?.HighContrastDark))
     return true
+
+  if (themeKind && (themeKind === ColorThemeKind?.Light || themeKind === ColorThemeKind?.HighContrastLight))
+    return false
 
   const theme = createConfigRef('workbench.colorTheme', '', true)
 
