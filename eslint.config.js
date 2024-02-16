@@ -7,9 +7,4 @@ module.exports = antfu(
       'src/generated',
     ],
   },
-  {
-    rules: {
-      // overrides
-    },
-  },
 )

@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer'
 import type { IconifyIcon, IconifyJSON } from '@iconify/iconify'
-import { $fetch } from 'ohmyfetch'
+import { $fetch } from 'ofetch'
 import type { ExtensionContext } from 'vscode'
 import { Uri, workspace } from 'vscode'
 import { pathToSvg, toDataUrl } from './utils/svgs'
