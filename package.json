@@ -42,6 +42,7 @@
     "onLanguage:handlebars",
     "onLanguage:svelte",
     "onLanguage:html",
+    "onLanguage:django-html",
     "onLanguage:css"
   ],
   "contributes": {
