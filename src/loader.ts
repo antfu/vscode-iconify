@@ -5,7 +5,7 @@ import type { ExtensionContext } from 'vscode'
 import { Uri, workspace } from 'vscode'
 import { pathToSvg, toDataUrl } from './utils/svgs'
 import { Log } from './utils'
-import { color, config, customCollections, parseIcon } from './config'
+import { color, config, customCollections, enabledAliases, parseIcon } from './config'
 
 let loadedIconSets: Record<string, IconifyJSON> = {}
 let dataURLCache: Record<string, string> = {}
@@ -115,8 +115,14 @@ export interface IconInfo extends IconifyIcon {
   id: string
 }
 
-export async function getIconInfo(ctx: ExtensionContext, key: string) {
-  const result = parseIcon(key)
+export async function getIconInfo(ctx: ExtensionContext, key: string, allowAliases = true) {
+  const alias = allowAliases ? enabledAliases.value[key] : undefined
+  if (allowAliases && config.customAliasesOnly && !alias)
+    return
+
+  const actualKey = alias ?? key
+
+  const result = parseIcon(actualKey)
   if (!result)
     return
 
@@ -133,7 +139,7 @@ export async function getIconInfo(ctx: ExtensionContext, key: string) {
 
   icon.collection = result.collection
   icon.id = result.icon
-  icon.key = key
+  icon.key = actualKey
   icon.ratio = (data.width! / data.height!) || 1
 
   return icon

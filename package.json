@@ -527,6 +527,24 @@
           "type": "object",
           "default": {},
           "description": "Collection IDs Map for collection name alias, e.g. { 'mc': 'mingcute' }"
+        },
+        "iconify.customAliases": {
+          "type": "object",
+          "default": {},
+          "description": "Aliases Map, e.g. { 'chevron-left': 'ri:arrow-left-s-line', }"
+        },
+        "iconify.customAliasesJsonPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "JSON paths for custom aliases"
+        },
+        "iconify.customAliasesOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Only use the icon aliases. Non aliased icons will be ignored."
         }
       }
     }
