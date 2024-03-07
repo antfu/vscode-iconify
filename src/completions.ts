@@ -1,29 +1,47 @@
 import type { CompletionItemProvider, ExtensionContext, TextDocument } from 'vscode'
 import { CompletionItem, CompletionItemKind, Position, Range, languages } from 'vscode'
 import { getCollectionMarkdown, getIconMarkdown } from './markdown'
-import { REGEX_NAMESPACE, config, enabledCollectionIds, enabledCollections } from './config'
+import { REGEX_NAMESPACE, REGEX_PREFIXED, config, enabledAliasIds, enabledCollectionIds, enabledCollections } from './config'
 
 export function RegisterCompletion(ctx: ExtensionContext) {
   const iconProvider: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position) {
       const line = document.getText(new Range(new Position(position.line, 0), new Position(position.line, position.character)))
-      const match = line.match(REGEX_NAMESPACE.value)
-      if (!match)
-        return null
 
-      const id = match[1]
-      const info = enabledCollections.value.find(i => i.id === id)
-      if (!info)
+      const prefixMatch = line.match(REGEX_PREFIXED.value)
+      if (!prefixMatch)
         return null
 
       const range = new Range(position.line, position.character, position.line, position.character)
-      return info.icons
-        .map((i) => {
-          const item = new CompletionItem(i, CompletionItemKind.Text)
-          item.detail = `${id}${config.delimiters[0]}${i}`
-          item.range = range
-          return item
-        })
+      const aliasCompletion = enabledAliasIds.value.map((i) => {
+        const item = new CompletionItem(i, CompletionItemKind.Text)
+        item.detail = `alias: ${i}`
+        item.range = range
+        return item
+      })
+
+      if (config.customAliasesOnly)
+        return aliasCompletion
+
+      const namespaceMatch = line.match(REGEX_NAMESPACE.value)
+      if (!namespaceMatch)
+        return aliasCompletion
+
+      const id = namespaceMatch[1]
+      const info = enabledCollections.value.find(i => i.id === id)
+      if (!info)
+        return aliasCompletion
+
+      return [
+        ...aliasCompletion,
+        ...info.icons
+          .map((i) => {
+            const item = new CompletionItem(i, CompletionItemKind.Text)
+            item.detail = `${id}${config.delimiters[0]}${i}`
+            item.range = range
+            return item
+          }),
+      ]
     },
     async resolveCompletionItem(item: CompletionItem) {
       return {

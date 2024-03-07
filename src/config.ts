@@ -56,6 +56,9 @@ export const config = reactive({
   cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://icones.js.org/collections'),
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
   customCollectionIdsMap: createConfigRef(`${EXT_NAMESPACE}.customCollectionIdsMap`, {} as Record<string, string | undefined>),
+  customAliases: createConfigRef(`${EXT_NAMESPACE}.customAliases`, {} as Record<string, string>),
+  customAliasesJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customAliasesJsonPaths`, []),
+  customAliasesOnly: createConfigRef(`${EXT_NAMESPACE}.customAliasesOnly`, false),
 })
 
 export const customCollections = ref([] as IconifyJSON[])
@@ -99,6 +102,46 @@ export async function LoadCustomCollections() {
   customCollections.value = result
 }
 
+export const customAliases = ref([] as Record<string, string>[])
+
+export async function LoadCustomAliases() {
+  const result = [] as Record<string, string>[]
+  const files = Array.from(
+    new Set(config.customAliasesJsonPaths.flatMap((file: string) => {
+      if (isAbsolute(file))
+        return [file]
+
+      const list: string[] = []
+      if (workspace?.workspaceFolders) {
+        for (const folder of workspace.workspaceFolders)
+          list.push(resolve(folder.uri.fsPath, file))
+      }
+      return list
+    })),
+  )
+
+  const existingFiles = files.filter((file) => {
+    const exists = fs.existsSync(file)
+    if (!exists)
+      Log.warning(`Custom aliases file does not exist: ${file}`)
+    return exists
+  })
+
+  if (existingFiles.length) {
+    Log.info(`Loading custom aliases from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
+
+    await Promise.all(existingFiles.map(async (file) => {
+      try {
+        result.push(await fs.readJSON(file))
+      }
+      catch {
+        Log.error(`Error on loading custom aliases: ${file}`)
+      }
+    }))
+  }
+
+  customAliases.value = result
+}
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
   const excludes = config.excludes || []
@@ -119,6 +162,19 @@ export const enabledCollections = computed<IconsetMeta[]>(() => {
     height: c.info?.height,
   }))
   return [...collections, ...customData]
+})
+
+export const enabledAliases = computed((): Record<string, string> => {
+  const combined = { ...config.customAliases }
+  for (const aliases of customAliases.value) {
+    for (const [key, value] of Object.entries(aliases))
+      combined[key] = value
+  }
+  return combined
+})
+
+export const enabledAliasIds = computed(() => {
+  return Object.keys(enabledAliases.value)
 })
 
 const RE_PART_DELIMITERS = computed(() => `(${config.delimiters.map(i => escapeRegExp(i)).join('|')})`)
@@ -143,12 +199,19 @@ const RE_PART_SUFFIXES = computed(() => {
 
 export const REGEX_DELIMITERS = computed(() => new RegExp(RE_PART_DELIMITERS.value, 'g'))
 
+export const REGEX_PREFIXED = computed(() => {
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}[\\w-]*$`)
+})
+
 export const REGEX_NAMESPACE = computed(() => {
   return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]*$`)
 })
 
 export const REGEX_FULL = computed(() => {
-  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}((?:${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]+)${RE_PART_SUFFIXES.value}`, 'g')
+  if (config.customAliasesOnly)
+    return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledAliasIds.value.join('|')})${RE_PART_SUFFIXES.value}(?=\\b[^-])`, 'g')
+
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}((?:(?:${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]+)|(?:${enabledAliasIds.value.join('|')}))${RE_PART_SUFFIXES.value}(?=\\b[^-])`, 'g')
 })
 
 const REGEX_STARTING_DELIMITERS = computed(() => new RegExp(`^${RE_PART_DELIMITERS.value}`, 'g'))
@@ -179,7 +242,9 @@ export const color = computed(() => {
 
 export async function onConfigUpdated() {
   _configState.value = +new Date()
-  await LoadCustomCollections()
+  await Promise.all(
+    [LoadCustomCollections(), LoadCustomAliases()],
+  )
 }
 
 // First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name

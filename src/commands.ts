@@ -21,6 +21,12 @@ export function RegisterCommands(ctx: ExtensionContext) {
   )
 
   ctx.subscriptions.push(
+    commands.registerCommand('iconify.toggle-custom-aliases-only', () => {
+      config.customAliasesOnly = !config.customAliasesOnly
+    }),
+  )
+
+  ctx.subscriptions.push(
     commands.registerCommand('iconify.clear-cache', () => {
       clearCache(ctx)
     }),
