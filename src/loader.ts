@@ -115,9 +115,9 @@ export interface IconInfo extends IconifyIcon {
   id: string
 }
 
-export async function getIconInfo(ctx: ExtensionContext, key: string) {
-  const alias = enabledAliases.value[key]
-  if (config.customAliasesOnly && !alias)
+export async function getIconInfo(ctx: ExtensionContext, key: string, allowAliases = true) {
+  const alias = allowAliases ? enabledAliases.value[key] : undefined
+  if (allowAliases && config.customAliasesOnly && !alias)
     return
 
   const actualKey = alias ?? key

@@ -103,6 +103,7 @@ export async function LoadCustomCollections() {
 }
 
 export const customAliases = ref([] as Record<string, string>[])
+const customAliasesFiles = ref([] as string[])
 
 export async function LoadCustomAliases() {
   const result = [] as Record<string, string>[]
@@ -141,6 +142,7 @@ export async function LoadCustomAliases() {
   }
 
   customAliases.value = result
+  customAliasesFiles.value = existingFiles
 }
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
@@ -177,6 +179,10 @@ export const enabledAliasIds = computed(() => {
   return Object.keys(enabledAliases.value)
 })
 
+export function isCustomAliasesFile(path: string) {
+  return customAliasesFiles.value.includes(path)
+}
+
 const RE_PART_DELIMITERS = computed(() => `(${config.delimiters.map(i => escapeRegExp(i)).join('|')})`)
 
 const RE_PART_PREFIXES = computed(() => {
@@ -205,6 +211,10 @@ export const REGEX_PREFIXED = computed(() => {
 
 export const REGEX_NAMESPACE = computed(() => {
   return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]*$`)
+})
+
+export const REGEX_COLLECTION_ICON = computed(() => {
+  return new RegExp(`[^\\w\\d]((?:${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]+)(?=\\b[^-])`, 'g')
 })
 
 export const REGEX_FULL = computed(() => {
