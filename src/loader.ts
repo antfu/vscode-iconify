@@ -132,10 +132,10 @@ export async function getIconInfo(ctx: ExtensionContext, key: string, allowAlias
     return null
 
   if (!icon.width)
-    icon.width = data.width || 32
+    icon.width = data.width || 16
 
   if (!icon.height)
-    icon.height = data.height || 32
+    icon.height = data.height || 16
 
   icon.collection = result.collection
   icon.id = result.icon

@@ -92,7 +92,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
         HideTextDecoration,
         decorations
           .map(({ range }) => range)
-          .filter(i => i.start.line !== editor!.selection.start.line),
+          .filter(i => !editor!.selections.map(({ start }) => start.line).includes(i.start.line)),
       )
     }
     else {
@@ -107,7 +107,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
     decorations = []
   }
 
-  let timeout: NodeJS.Timer | undefined
+  let timeout: NodeJS.Timeout | undefined
   function triggerUpdateDecorations(_editor?: TextEditor) {
     updateEditor(_editor)
 
