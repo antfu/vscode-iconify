@@ -538,11 +538,6 @@
           "default": {},
           "description": "Collection IDs Map for collection name alias, e.g. { 'mc': 'mingcute' }"
         },
-        "iconify.customAliases": {
-          "type": "object",
-          "default": {},
-          "description": "Aliases Map, e.g. { 'chevron-left': 'ri:arrow-left-s-line', }"
-        },
         "iconify.customAliasesJsonPaths": {
           "type": "array",
           "items": {

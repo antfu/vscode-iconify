@@ -56,7 +56,6 @@ export const config = reactive({
   cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://icones.js.org/collections'),
   customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
   customCollectionIdsMap: createConfigRef(`${EXT_NAMESPACE}.customCollectionIdsMap`, {} as Record<string, string | undefined>),
-  customAliases: createConfigRef(`${EXT_NAMESPACE}.customAliases`, {} as Record<string, string>),
   customAliasesJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customAliasesJsonPaths`, []),
   customAliasesOnly: createConfigRef(`${EXT_NAMESPACE}.customAliasesOnly`, false),
 })
@@ -167,12 +166,12 @@ export const enabledCollections = computed<IconsetMeta[]>(() => {
 })
 
 export const enabledAliases = computed((): Record<string, string> => {
-  const combined = { ...config.customAliases }
+  const flat: Record<string, string> = {}
   for (const aliases of customAliases.value) {
     for (const [key, value] of Object.entries(aliases))
-      combined[key] = value
+      flat[key] = value
   }
-  return combined
+  return flat
 })
 
 export const enabledAliasIds = computed(() => {
