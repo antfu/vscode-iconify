@@ -3,7 +3,7 @@
   "name": "iconify",
   "displayName": "Iconify IntelliSense",
   "type": "commonjs",
-  "version": "0.7.6",
+  "version": "0.8.0",
   "private": true,
   "packageManager": "pnpm@9.0.6",
   "description": "Intelligent Iconify previewing and searching for VS Code",
