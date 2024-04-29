@@ -140,7 +140,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
   window.onDidChangeTextEditorSelection((e) => {
     updateEditor(e.textEditor)
     refreshDecorations()
-  })
+  }, null, ctx.subscriptions)
 
   // on start up
   updateEditor(window.activeTextEditor)
