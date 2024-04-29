@@ -1,6 +1,6 @@
 import type { DecorationOptions, ExtensionContext, TextEditor } from 'vscode'
 import { DecorationRangeBehavior, Range, Uri, window, workspace } from 'vscode'
-import { REGEX_FULL, config, onConfigUpdated } from './config'
+import { REGEX_COLLECTION_ICON, REGEX_FULL, config, isCustomAliasesFile, onConfigUpdated } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'
 
@@ -34,7 +34,8 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
 
     const text = editor.document.getText()
     let match
-    const regex = REGEX_FULL.value
+    const isAliasesFile = isCustomAliasesFile(editor.document.uri.path)
+    const regex = isAliasesFile ? REGEX_COLLECTION_ICON.value : REGEX_FULL.value
     regex.lastIndex = 0
     const keys: [Range, string][] = []
 
@@ -50,7 +51,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
     }
 
     decorations = (await Promise.all(keys.map(async ([range, key]) => {
-      const info = await getIconInfo(ctx, key)
+      const info = await getIconInfo(ctx, key, !isAliasesFile)
       if (!info)
         return undefined
 
