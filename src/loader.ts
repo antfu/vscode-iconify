@@ -59,7 +59,7 @@ async function loadCache(ctx: ExtensionContext, iconSetId: string): Promise<Icon
     const buffer = await workspace.fs.readFile(getCacheUriForIconSet(ctx, iconSetId))
     return JSON.parse(buffer.toString())
   }
-  catch (_) {}
+  catch {}
 }
 
 async function migrateCache(ctx: ExtensionContext) {
