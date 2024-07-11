@@ -1,12 +1,13 @@
 import { isAbsolute, resolve } from 'node:path'
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
+import type { WritableComputedRef } from '@vue/reactivity'
 import { computed, reactive, ref } from '@vue/reactivity'
 import type { IconifyJSON } from '@iconify/iconify'
-import { EXT_NAMESPACE } from './meta'
 import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
 import { Log } from './utils'
+import * as meta from './generated/meta'
 
 const _configState = ref(0)
 
@@ -41,23 +42,14 @@ function escapeRegExp(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
+const configRaw = Object.fromEntries(
+  Object.entries(meta.configs)
+    .map(([key, value]) => [key, createConfigRef(value.key, value.default)]),
+) as { [KEY in keyof typeof meta.configs]: WritableComputedRef<meta.ConfigKeyTypeMap[meta.ConfigShorthandMap[KEY]]> }
+
 export const config = reactive({
-  inplace: createConfigRef(`${EXT_NAMESPACE}.inplace`, true),
-  annotations: createConfigRef(`${EXT_NAMESPACE}.annotations`, true),
-  position: createConfigRef(`${EXT_NAMESPACE}.position`, 'before'),
-  color: createConfigRef(`${EXT_NAMESPACE}.color`, 'auto'),
-  delimiters: createConfigRef(`${EXT_NAMESPACE}.delimiters`, [':', '--', '-', '/']),
-  includes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.includes`, null),
-  excludes: createConfigRef<string[] | null>(`${EXT_NAMESPACE}.excludes`, null),
+  ...configRaw,
   fontSize: createConfigRef('editor.fontSize', 12),
-  languageIds: createConfigRef(`${EXT_NAMESPACE}.languageIds`, []),
-  prefixes: createConfigRef(`${EXT_NAMESPACE}.prefixes`, ['', 'i-', '~icons/']),
-  suffixes: createConfigRef(`${EXT_NAMESPACE}.suffixes`, ['']),
-  cdnEntry: createConfigRef(`${EXT_NAMESPACE}.cdnEntry`, 'https://icones.js.org/collections'),
-  customCollectionJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customCollectionJsonPaths`, []),
-  customCollectionIdsMap: createConfigRef(`${EXT_NAMESPACE}.customCollectionIdsMap`, {} as Record<string, string | undefined>),
-  customAliasesJsonPaths: createConfigRef(`${EXT_NAMESPACE}.customAliasesJsonPaths`, []),
-  customAliasesOnly: createConfigRef(`${EXT_NAMESPACE}.customAliasesOnly`, false),
 })
 
 export const customCollections = ref([] as IconifyJSON[])
@@ -145,7 +137,7 @@ export async function LoadCustomAliases() {
 }
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
-  const excludes = config.excludes || []
+  const excludes: string[] = config.excludes || []
 
   return [
     ...includes.filter(i => !excludes.includes(i)),
@@ -238,7 +230,10 @@ export function parseIcon(str: string) {
   if (!icon)
     return
 
-  return { collection: config.customCollectionIdsMap[collection] ?? collection, icon }
+  return {
+    collection: config.customCollectionIdsMap[collection] ?? collection,
+    icon,
+  }
 }
 
 export const color = computed(() => {
@@ -259,7 +254,7 @@ export async function onConfigUpdated() {
 // First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name
 function isDarkTheme() {
   const themeKind = window?.activeColorTheme?.kind
-  if (themeKind && (themeKind === ColorThemeKind?.Dark || themeKind === ColorThemeKind?.HighContrastDark))
+  if (themeKind && (themeKind === ColorThemeKind?.Dark || themeKind === ColorThemeKind?.HighContrast))
     return true
 
   if (themeKind && (themeKind === ColorThemeKind?.Light || themeKind === ColorThemeKind?.HighContrastLight))

@@ -5,7 +5,7 @@
   "type": "commonjs",
   "version": "0.8.1",
   "private": true,
-  "packageManager": "pnpm@9.0.6",
+  "packageManager": "pnpm@9.5.0",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "license": "MIT",
   "homepage": "https://github.com/antfu/vscode-iconify",
@@ -30,7 +30,7 @@
   "main": "dist/index.js",
   "icon": "res/logo.png",
   "engines": {
-    "vscode": "^1.81.0"
+    "vscode": "^1.89.0"
   },
   "activationEvents": [
     "workspaceContains:package.json",
@@ -242,6 +242,7 @@
               "heroicons",
               "heroicons-outline",
               "heroicons-solid",
+              "hugeicons",
               "humbleicons",
               "ic",
               "icomoon-free",
@@ -300,6 +301,7 @@
               "radix-icons",
               "raphael",
               "ri",
+              "rivet-icons",
               "si-glyph",
               "simple-icons",
               "simple-line-icons",
@@ -328,6 +330,7 @@
               "vs",
               "vscode-icons",
               "websymbol",
+              "weui",
               "whh",
               "wi",
               "wpf",
@@ -424,6 +427,7 @@
               "heroicons",
               "heroicons-outline",
               "heroicons-solid",
+              "hugeicons",
               "humbleicons",
               "ic",
               "icomoon-free",
@@ -482,6 +486,7 @@
               "radix-icons",
               "raphael",
               "ri",
+              "rivet-icons",
               "si-glyph",
               "simple-icons",
               "simple-line-icons",
@@ -510,6 +515,7 @@
               "vs",
               "vscode-icons",
               "websymbol",
+              "weui",
               "whh",
               "wi",
               "wpf",
@@ -535,6 +541,9 @@
         },
         "iconify.customCollectionIdsMap": {
           "type": "object",
+          "items": {
+            "type": "string"
+          },
           "default": {},
           "description": "Collection IDs Map for collection name alias, e.g. { 'mc': 'mingcute' }"
         },
@@ -558,24 +567,28 @@
     "build": "esno scripts/build.ts",
     "dev": "pnpm build -- --watch",
     "lint": "eslint .",
-    "prepare": "esno scripts/prepare.ts",
+    "typecheck": "tsc --noEmit",
+    "prepare": "esno scripts/prepare.ts && pnpm run update",
+    "update": "vscode-ext-gen --output src/generated/meta.ts",
     "release": "bumpp --tag --push --commit"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.22.0",
+    "@antfu/utils": "^0.7.10",
     "@iconify/iconify": "^3.1.1",
-    "@iconify/json": "^2.2.205",
+    "@iconify/json": "^2.2.226",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.14.10",
-    "@types/vscode": "1.81.0",
-    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@types/vscode": "1.89.0",
     "@vue/reactivity": "^3.4.31",
     "bumpp": "^9.4.1",
     "eslint": "^9.6.0",
     "esno": "^4.7.0",
     "fs-extra": "^11.2.0",
     "ofetch": "^1.3.4",
+    "reactive-vscode": "0.2.0-beta.3",
     "tsup": "^8.1.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vscode-ext-gen": "^0.3.1"
   }
 }

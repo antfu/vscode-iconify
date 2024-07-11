@@ -1,6 +1,13 @@
 {
-  // Enable the ESlint flat config support
-  "eslint.experimental.useFlatConfig": true,
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "package.json",
+        "isAsync": true,
+        "cmd": "npm run update"
+      }
+    ]
+  },
 
   // Disable the default formatter, use eslint instead
   "prettier.enable": false,
@@ -37,5 +44,8 @@
     "json",
     "jsonc",
     "yaml"
+  ],
+  "cSpell.words": [
+    "Inplace"
   ]
 }

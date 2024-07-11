@@ -1,13 +1,13 @@
 import type { OutputChannel } from 'vscode'
 import { window } from 'vscode'
-import { EXT_NAME } from '../meta'
+import { displayName } from '../generated/meta'
 
 export class Log {
   private static _channel: OutputChannel
 
   static get outputChannel(): OutputChannel {
     if (!this._channel)
-      this._channel = window.createOutputChannel(EXT_NAME)
+      this._channel = window.createOutputChannel(displayName)
     return this._channel
   }
 
@@ -33,7 +33,7 @@ export class Log {
       const openOutputButton = 'Error Log'
       const message = typeof err === 'string'
         ? err
-        : `${EXT_NAME} Error: ${err.toString()}`
+        : `${displayName} Error: ${err.toString()}`
 
       const result = await window.showErrorMessage(message, openOutputButton)
       if (result === openOutputButton)
