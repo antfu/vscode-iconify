@@ -1,5 +1,6 @@
-import type { DecorationOptions, ExtensionContext, TextEditor } from 'vscode'
+import type { DecorationOptions, TextEditor } from 'vscode'
 import { DecorationRangeBehavior, Range, Uri, window, workspace } from 'vscode'
+import { extensionContext } from 'reactive-vscode'
 import { REGEX_COLLECTION_ICON, REGEX_FULL, config, isCustomAliasesFile, onConfigUpdated } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'
@@ -10,7 +11,7 @@ export interface DecorationMatch extends DecorationOptions {
   key: string
 }
 
-export function RegisterAnnotations(ctx: ExtensionContext) {
+export function RegisterAnnotations() {
   const InlineIconDecoration = window.createTextEditorDecorationType({
     textDecoration: 'none; opacity: 0.6 !important;',
     rangeBehavior: DecorationRangeBehavior.ClosedClosed,
@@ -51,12 +52,12 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
     }
 
     decorations = (await Promise.all(keys.map(async ([range, key]) => {
-      const info = await getIconInfo(ctx, key, !isAliasesFile)
+      const info = await getIconInfo(key, !isAliasesFile)
       if (!info)
         return undefined
 
       const position = config.position === 'after' ? 'after' : 'before'
-      const dataurl = await getDataURL(ctx, info, config.fontSize * 1.2)
+      const dataurl = await getDataURL(info, config.fontSize * 1.2)
 
       const item: DecorationMatch = {
         range,
@@ -67,7 +68,7 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
             width: `${config.fontSize * info.ratio * 1.1}px`,
           },
         },
-        hoverMessage: await getIconMarkdown(ctx, key),
+        hoverMessage: await getIconMarkdown(key),
         key,
       }
       return item
@@ -120,28 +121,30 @@ export function RegisterAnnotations(ctx: ExtensionContext) {
     }, 200)
   }
 
-  window.onDidChangeActiveTextEditor((e) => {
-    triggerUpdateDecorations(e)
-  }, null, ctx.subscriptions)
+  extensionContext.value?.subscriptions.push(
+    window.onDidChangeActiveTextEditor((e) => {
+      triggerUpdateDecorations(e)
+    }),
 
-  workspace.onDidChangeTextDocument((event) => {
-    if (window.activeTextEditor && event.document === window.activeTextEditor.document)
-      triggerUpdateDecorations(window.activeTextEditor)
-  }, null, ctx.subscriptions)
+    workspace.onDidChangeTextDocument((event) => {
+      if (window.activeTextEditor && event.document === window.activeTextEditor.document)
+        triggerUpdateDecorations(window.activeTextEditor)
+    }),
 
-  workspace.onDidChangeConfiguration(async () => {
-    await onConfigUpdated()
-    triggerUpdateDecorations()
-  }, null, ctx.subscriptions)
+    workspace.onDidChangeConfiguration(async () => {
+      await onConfigUpdated()
+      triggerUpdateDecorations()
+    }),
 
-  window.onDidChangeVisibleTextEditors((editors) => {
-    triggerUpdateDecorations(editors[0])
-  }, null, ctx.subscriptions)
+    window.onDidChangeVisibleTextEditors((editors) => {
+      triggerUpdateDecorations(editors[0])
+    }),
 
-  window.onDidChangeTextEditorSelection((e) => {
-    updateEditor(e.textEditor)
-    refreshDecorations()
-  }, null, ctx.subscriptions)
+    window.onDidChangeTextEditorSelection((e) => {
+      updateEditor(e.textEditor)
+      refreshDecorations()
+    }),
+  )
 
   // on start up
   updateEditor(window.activeTextEditor)

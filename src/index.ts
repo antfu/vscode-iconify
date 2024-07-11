@@ -1,4 +1,4 @@
-import type { ExtensionContext } from 'vscode'
+import { defineExtension } from 'reactive-vscode'
 import { version } from '../package.json'
 import { Log } from './utils'
 import { collections } from './collections'
@@ -7,8 +7,10 @@ import { RegisterAnnotations } from './annotation'
 import { RegisterCommands } from './commands'
 import { LoadCustomAliases, LoadCustomCollections } from './config'
 
-export async function activate(ctx: ExtensionContext) {
+const { activate, deactivate } = defineExtension(async () => {
   Log.info(`🈶 Activated, v${version}`)
+
+  RegisterCommands()
 
   await LoadCustomCollections()
 
@@ -18,11 +20,8 @@ export async function activate(ctx: ExtensionContext) {
 
   Log.info(`🎛 ${collections.length} aliases loaded`)
 
-  RegisterCommands(ctx)
-  RegisterCompletion(ctx)
-  RegisterAnnotations(ctx)
-}
+  RegisterCompletion()
+  RegisterAnnotations()
+})
 
-export function deactivate() {
-  Log.info('🈚 Deactivated')
-}
+export { activate, deactivate }

@@ -1,56 +1,24 @@
 import { isAbsolute, resolve } from 'node:path'
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
-import type { WritableComputedRef } from '@vue/reactivity'
-import { computed, reactive, ref } from '@vue/reactivity'
 import type { IconifyJSON } from '@iconify/iconify'
+import { computed, createConfigRef, defineConfigsWithDefaults, reactive, ref } from 'reactive-vscode'
 import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
 import { Log } from './utils'
-import * as meta from './generated/meta'
+import * as Meta from './generated/meta'
 
-const _configState = ref(0)
-
-function getConfig<T = any>(key: string): T | undefined {
-  return workspace
-    .getConfiguration()
-    .get<T>(key)
-}
-
-async function setConfig(key: string, value: any, isGlobal = true) {
-  // update value
-  return await workspace
-    .getConfiguration()
-    .update(key, value, isGlobal)
-}
-
-function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
-  return computed({
-    get: () => {
-      // to force computed update
-      // eslint-disable-next-line no-unused-expressions
-      _configState.value
-      return getConfig<T>(key) ?? defaultValue
-    },
-    set: (v) => {
-      setConfig(key, v, isGlobal)
-    },
-  })
-}
+export const config = reactive({
+  ...defineConfigsWithDefaults<Meta.ScopedConfigKeyTypeMap>(
+    Meta.scopedConfigs.scope,
+    Meta.scopedConfigs.defaults,
+  ),
+  fontSize: createConfigRef('editor.fontSize', 12),
+})
 
 function escapeRegExp(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
-
-const configRaw = Object.fromEntries(
-  Object.entries(meta.configs)
-    .map(([key, value]) => [key, createConfigRef(value.key, value.default)]),
-) as { [KEY in keyof typeof meta.configs]: WritableComputedRef<meta.ConfigKeyTypeMap[meta.ConfigShorthandMap[KEY]]> }
-
-export const config = reactive({
-  ...configRaw,
-  fontSize: createConfigRef('editor.fontSize', 12),
-})
 
 export const customCollections = ref([] as IconifyJSON[])
 
@@ -245,7 +213,6 @@ export const color = computed(() => {
 })
 
 export async function onConfigUpdated() {
-  _configState.value = +new Date()
   await Promise.all(
     [LoadCustomCollections(), LoadCustomAliases()],
   )
@@ -260,14 +227,14 @@ function isDarkTheme() {
   if (themeKind && (themeKind === ColorThemeKind?.Light || themeKind === ColorThemeKind?.HighContrastLight))
     return false
 
-  const theme = createConfigRef('workbench.colorTheme', '', true)
+  const theme = workspace.getConfiguration().get('workbench.colorTheme', '')
 
   // must be dark
-  if (theme.value.match(/dark|black/i) != null)
+  if (theme.match(/dark|black/i) != null)
     return true
 
   // must be light
-  if (theme.value.match(/light/i) != null)
+  if (theme.match(/light/i) != null)
     return false
 
   // IDK, maybe dark
