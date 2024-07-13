@@ -41,7 +41,7 @@ export async function LoadCustomCollections() {
   const existingFiles = files.filter((file) => {
     const exists = fs.existsSync(file)
     if (!exists)
-      Log.warning(`Custom collection file does not exist: ${file}`)
+      Log.warn(`Custom collection file does not exist: ${file}`)
     return exists
   })
 
@@ -83,7 +83,7 @@ export async function LoadCustomAliases() {
   const existingFiles = files.filter((file) => {
     const exists = fs.existsSync(file)
     if (!exists)
-      Log.warning(`Custom aliases file does not exist: ${file}`)
+      Log.warn(`Custom aliases file does not exist: ${file}`)
     return exists
   })
 
