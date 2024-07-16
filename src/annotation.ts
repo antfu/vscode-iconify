@@ -1,7 +1,7 @@
-import type { DecorationOptions, TextEditor } from 'vscode'
-import { DecorationRangeBehavior, Range, Uri, window, workspace } from 'vscode'
-import { extensionContext } from 'reactive-vscode'
-import { REGEX_COLLECTION_ICON, REGEX_FULL, config, editorConfig, isCustomAliasesFile, onConfigUpdated } from './config'
+import type { DecorationOptions } from 'vscode'
+import { DecorationRangeBehavior, Range, Uri, window } from 'vscode'
+import { shallowRef, useActiveEditorDecorations, useActiveTextEditor, useDocumentText, useTextEditorSelections, watchEffect } from 'reactive-vscode'
+import { REGEX_COLLECTION_ICON, REGEX_FULL, config, editorConfig, isCustomAliasesFile } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'
 
@@ -20,43 +20,51 @@ export function RegisterAnnotations() {
     textDecoration: 'none; display: none;', // a hack to inject custom style
   })
 
-  let decorations: DecorationMatch[] = []
-  let editor: TextEditor | undefined
+  const editor = useActiveTextEditor()
+  const selections = useTextEditorSelections(editor)
+  const text = useDocumentText(() => editor.value?.document)
 
-  async function updateDecorations() {
-    if (!editor)
+  const decorations = shallowRef<DecorationMatch[]>([])
+
+  useActiveEditorDecorations(InlineIconDecoration, decorations)
+  useActiveEditorDecorations(HideTextDecoration, () => decorations.value
+    .map(({ range }) => range)
+    .filter(i => !selections.value.map(({ start }) => start.line).includes(i.start.line)))
+
+  // Calculate decorations
+  watchEffect(async () => {
+    if (!editor.value)
       return
 
     if (!config.annotations) {
-      editor.setDecorations(InlineIconDecoration, [])
-      editor.setDecorations(HideTextDecoration, [])
+      decorations.value = []
       return
     }
 
-    const text = editor.document.getText()
     let match
-    const isAliasesFile = isCustomAliasesFile(editor.document.uri.path)
+    const isAliasesFile = isCustomAliasesFile(editor.value.document.uri.path)
     const regex = isAliasesFile ? REGEX_COLLECTION_ICON.value : REGEX_FULL.value
     regex.lastIndex = 0
     const keys: [Range, string][] = []
 
     // eslint-disable-next-line no-cond-assign
-    while ((match = regex.exec(text))) {
+    while ((match = regex.exec(text.value!))) {
       const key = match[1]
       if (!key)
         continue
 
-      const startPos = editor.document.positionAt(match.index + 1)
-      const endPos = editor.document.positionAt(match.index + match[0].length)
+      const startPos = editor.value.document.positionAt(match.index + 1)
+      const endPos = editor.value.document.positionAt(match.index + match[0].length)
       keys.push([new Range(startPos, endPos), key])
     }
 
-    decorations = (await Promise.all(keys.map(async ([range, key]) => {
+    const fontSize = editorConfig.fontSize
+    const position = config.position === 'after' ? 'after' : 'before'
+    decorations.value = (await Promise.all(keys.map(async ([range, key]) => {
       const info = await getIconInfo(key, !isAliasesFile)
       if (!info)
         return undefined
 
-      const position = config.position === 'after' ? 'after' : 'before'
       const dataurl = await getDataURL(info, editorConfig.fontSize * 1.2)
 
       const item: DecorationMatch = {
@@ -64,8 +72,8 @@ export function RegisterAnnotations() {
         renderOptions: {
           [position]: {
             contentIconPath: Uri.parse(dataurl),
-            margin: `-${editorConfig.fontSize}px 2px; transform: translate(-2px, 3px);`,
-            width: `${editorConfig.fontSize * info.ratio * 1.1}px`,
+            margin: `-${fontSize}px 2px; transform: translate(-2px, 3px);`,
+            width: `${fontSize * info.ratio * 1.1}px`,
           },
         },
         hoverMessage: await getIconMarkdown(key),
@@ -73,80 +81,5 @@ export function RegisterAnnotations() {
       }
       return item
     }))).filter(isTruthy)
-
-    refreshDecorations()
-  }
-
-  function refreshDecorations() {
-    if (!editor)
-      return
-
-    if (!config.annotations) {
-      editor.setDecorations(InlineIconDecoration, [])
-      editor.setDecorations(HideTextDecoration, [])
-      return
-    }
-
-    editor.setDecorations(InlineIconDecoration, decorations)
-    if (config.inplace) {
-      editor.setDecorations(
-        HideTextDecoration,
-        decorations
-          .map(({ range }) => range)
-          .filter(i => !editor!.selections.map(({ start }) => start.line).includes(i.start.line)),
-      )
-    }
-    else {
-      editor.setDecorations(HideTextDecoration, [])
-    }
-  }
-
-  function updateEditor(_editor?: TextEditor) {
-    if (!_editor || editor === _editor)
-      return
-    editor = _editor
-    decorations = []
-  }
-
-  let timeout: NodeJS.Timeout | undefined
-  function triggerUpdateDecorations(_editor?: TextEditor) {
-    updateEditor(_editor)
-
-    if (timeout) {
-      clearTimeout(timeout)
-      timeout = undefined
-    }
-    timeout = setTimeout(() => {
-      updateDecorations()
-    }, 200)
-  }
-
-  extensionContext.value?.subscriptions.push(
-    window.onDidChangeActiveTextEditor((e) => {
-      triggerUpdateDecorations(e)
-    }),
-
-    workspace.onDidChangeTextDocument((event) => {
-      if (window.activeTextEditor && event.document === window.activeTextEditor.document)
-        triggerUpdateDecorations(window.activeTextEditor)
-    }),
-
-    workspace.onDidChangeConfiguration(async () => {
-      await onConfigUpdated()
-      triggerUpdateDecorations()
-    }),
-
-    window.onDidChangeVisibleTextEditors((editors) => {
-      triggerUpdateDecorations(editors[0])
-    }),
-
-    window.onDidChangeTextEditorSelection((e) => {
-      updateEditor(e.textEditor)
-      refreshDecorations()
-    }),
-  )
-
-  // on start up
-  updateEditor(window.activeTextEditor)
-  triggerUpdateDecorations()
+  })
 }

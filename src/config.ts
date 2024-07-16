@@ -1,8 +1,7 @@
 import { isAbsolute, resolve } from 'node:path'
-import { workspace } from 'vscode'
 import fs from 'fs-extra'
 import type { IconifyJSON } from '@iconify/types'
-import { computed, defineConfigObject, ref, useIsDarkTheme } from 'reactive-vscode'
+import { computed, defineConfigObject, ref, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
 import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
 import { Log } from './utils'
@@ -26,87 +25,96 @@ function escapeRegExp(text: string) {
 
 export const customCollections = ref([] as IconifyJSON[])
 
-export async function LoadCustomCollections() {
-  const result = [] as IconifyJSON[]
-  const files = Array.from(
-    new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
-      if (isAbsolute(file))
-        return [file]
+export async function useCustomCollections() {
+  const workspaceFolders = useWorkspaceFolders()
 
-      const list: string[] = []
-      if (workspace?.workspaceFolders) {
-        for (const folder of workspace.workspaceFolders)
-          list.push(resolve(folder.uri.fsPath, file))
-      }
-      return list
-    })),
-  )
+  watchEffect(async () => {
+    const result = [] as IconifyJSON[]
+    const files = Array.from(
+      new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
+        if (isAbsolute(file))
+          return [file]
 
-  const existingFiles = files.filter((file) => {
-    const exists = fs.existsSync(file)
-    if (!exists)
-      Log.warn(`Custom collection file does not exist: ${file}`)
-    return exists
+        const list: string[] = []
+        if (workspaceFolders.value) {
+          for (const folder of workspaceFolders.value)
+            list.push(resolve(folder.uri.fsPath, file))
+        }
+        return list
+      })),
+    )
+
+    const existingFiles = files.filter((file) => {
+      const exists = fs.existsSync(file)
+      if (!exists)
+        Log.warn(`Custom collection file does not exist: ${file}`)
+      return exists
+    })
+
+    if (existingFiles.length) {
+      Log.info(`Loading custom collections from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
+
+      await Promise.all(existingFiles.map(async (file) => {
+        try {
+          result.push(await fs.readJSON(file))
+        }
+        catch {
+          Log.error(`Error on loading custom collection: ${file}`)
+        }
+      }))
+    }
+
+    customCollections.value = result
   })
-
-  if (existingFiles.length) {
-    Log.info(`Loading custom collections from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
-
-    await Promise.all(existingFiles.map(async (file) => {
-      try {
-        result.push(await fs.readJSON(file))
-      }
-      catch {
-        Log.error(`Error on loading custom collection: ${file}`)
-      }
-    }))
-  }
-
-  customCollections.value = result
 }
 
 export const customAliases = ref([] as Record<string, string>[])
 const customAliasesFiles = ref([] as string[])
 
-export async function LoadCustomAliases() {
-  const result = [] as Record<string, string>[]
-  const files = Array.from(
-    new Set(config.customAliasesJsonPaths.flatMap((file: string) => {
-      if (isAbsolute(file))
-        return [file]
+export async function useCustomAliases() {
+  const workspaceFolders = useWorkspaceFolders()
 
-      const list: string[] = []
-      if (workspace?.workspaceFolders) {
-        for (const folder of workspace.workspaceFolders)
-          list.push(resolve(folder.uri.fsPath, file))
-      }
-      return list
-    })),
-  )
+  watchEffect(async () => {
+    const result = [] as Record<string, string>[]
+    const files = Array.from(
+      new Set(config.customAliasesJsonPaths.flatMap((file: string) => {
+        if (isAbsolute(file))
+          return [file]
 
-  const existingFiles = files.filter((file) => {
-    const exists = fs.existsSync(file)
-    if (!exists)
-      Log.warn(`Custom aliases file does not exist: ${file}`)
-    return exists
+        const list: string[] = []
+        if (workspaceFolders.value) {
+          for (const folder of workspaceFolders.value)
+            list.push(resolve(folder.uri.fsPath, file))
+        }
+        return list
+      })),
+    )
+
+    const existingFiles = files.filter((file) => {
+      const exists = fs.existsSync(file)
+      if (!exists)
+        Log.warn(`Custom aliases file does not exist: ${file}`)
+      return exists
+    })
+
+    if (existingFiles.length) {
+      Log.info(`Loading custom aliases from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
+
+      await Promise.all(existingFiles.map(async (file) => {
+        try {
+          result.push(await fs.readJSON(file))
+        }
+        catch {
+          Log.error(`Error on loading custom aliases: ${file}`)
+        }
+      }))
+    }
+
+    customAliases.value = result
+    customAliasesFiles.value = existingFiles
   })
-
-  if (existingFiles.length) {
-    Log.info(`Loading custom aliases from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
-
-    await Promise.all(existingFiles.map(async (file) => {
-      try {
-        result.push(await fs.readJSON(file))
-      }
-      catch {
-        Log.error(`Error on loading custom aliases: ${file}`)
-      }
-    }))
-  }
-
-  customAliases.value = result
-  customAliasesFiles.value = existingFiles
 }
+
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
   const excludes = config.excludes as string[] || []
@@ -210,9 +218,3 @@ export function parseIcon(str: string) {
 
 export const isDark = useIsDarkTheme()
 export const color = computed(() => isDark.value ? '#eee' : '#222')
-
-export async function onConfigUpdated() {
-  await Promise.all(
-    [LoadCustomCollections(), LoadCustomAliases()],
-  )
-}
