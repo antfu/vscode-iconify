@@ -8,10 +8,10 @@ import { collectionIds, collections } from './collections'
 import { Log } from './utils'
 import * as Meta from './generated/meta'
 
-export const config = shallowReactive(defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
+export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
   Meta.scopedConfigs.scope,
   Meta.scopedConfigs.defaults,
-))
+)
 
 export const editorConfig = defineConfigObject(
   'editor',
