@@ -4,7 +4,7 @@ import { extensionContext } from 'reactive-vscode'
 import { getCollectionMarkdown, getIconMarkdown } from './markdown'
 import { REGEX_NAMESPACE, REGEX_PREFIXED, config, enabledAliasIds, enabledCollectionIds, enabledCollections } from './config'
 
-export function RegisterCompletion() {
+export function useCompletion() {
   const ctx = extensionContext.value!
   const iconProvider: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position) {

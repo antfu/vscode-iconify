@@ -11,7 +11,7 @@ export interface DecorationMatch extends DecorationOptions {
   key: string
 }
 
-export function RegisterAnnotations() {
+export function useAnnotations() {
   const InlineIconDecoration = window.createTextEditorDecorationType({
     textDecoration: 'none; opacity: 0.6 !important;',
     rangeBehavior: DecorationRangeBehavior.ClosedClosed,

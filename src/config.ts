@@ -216,5 +216,5 @@ export function parseIcon(str: string) {
   }
 }
 
-export const isDark = useIsDarkTheme()
+const isDark = useIsDarkTheme()
 export const color = computed(() => isDark.value ? '#eee' : '#222')

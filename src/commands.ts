@@ -8,7 +8,7 @@ export interface DecorationMatch extends DecorationOptions {
   key: string
 }
 
-export function RegisterCommands() {
+export function useCommands() {
   useCommand(meta.commands.toggleAnnotations, () => {
     config.$update('annotations', !config.annotations)
   })
