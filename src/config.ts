@@ -1,20 +1,24 @@
 import { isAbsolute, resolve } from 'node:path'
 import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
-import type { IconifyJSON } from '@iconify/iconify'
-import { computed, createConfigRef, defineConfigsWithDefaults, reactive, ref } from 'reactive-vscode'
+import type { IconifyJSON } from '@iconify/types'
+import { computed, defineConfigObject, ref, shallowReactive } from 'reactive-vscode'
 import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
 import { Log } from './utils'
 import * as Meta from './generated/meta'
 
-export const config = reactive({
-  ...defineConfigsWithDefaults<Meta.ScopedConfigKeyTypeMap>(
-    Meta.scopedConfigs.scope,
-    Meta.scopedConfigs.defaults,
-  ),
-  fontSize: createConfigRef('editor.fontSize', 12),
-})
+export const config = shallowReactive(defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
+  Meta.scopedConfigs.scope,
+  Meta.scopedConfigs.defaults,
+))
+
+export const editorConfig = defineConfigObject(
+  'editor',
+  {
+    fontSize: 12,
+  },
+)
 
 function escapeRegExp(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
@@ -105,7 +109,7 @@ export async function LoadCustomAliases() {
 }
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
-  const excludes: string[] = config.excludes || []
+  const excludes = config.excludes as string[] || []
 
   return [
     ...includes.filter(i => !excludes.includes(i)),

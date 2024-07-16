@@ -10,11 +10,11 @@ export interface DecorationMatch extends DecorationOptions {
 
 export function RegisterCommands() {
   useCommand(meta.commands.toggleAnnotations, () => {
-    config.annotations = !config.annotations
+    config.$update('annotations', !config.annotations)
   })
 
   useCommand(meta.commands.toggleInplace, () => {
-    config.inplace = !config.inplace
+    config.$update('inplace', !config.inplace)
   })
 
   useCommand(meta.commands.clearCache, () => {

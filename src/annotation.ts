@@ -1,7 +1,7 @@
 import type { DecorationOptions, TextEditor } from 'vscode'
 import { DecorationRangeBehavior, Range, Uri, window, workspace } from 'vscode'
 import { extensionContext } from 'reactive-vscode'
-import { REGEX_COLLECTION_ICON, REGEX_FULL, config, isCustomAliasesFile, onConfigUpdated } from './config'
+import { REGEX_COLLECTION_ICON, REGEX_FULL, config, editorConfig, isCustomAliasesFile, onConfigUpdated } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { isTruthy } from './utils'
 
@@ -57,15 +57,15 @@ export function RegisterAnnotations() {
         return undefined
 
       const position = config.position === 'after' ? 'after' : 'before'
-      const dataurl = await getDataURL(info, config.fontSize * 1.2)
+      const dataurl = await getDataURL(info, editorConfig.fontSize * 1.2)
 
       const item: DecorationMatch = {
         range,
         renderOptions: {
           [position]: {
             contentIconPath: Uri.parse(dataurl),
-            margin: `-${config.fontSize}px 2px; transform: translate(-2px, 3px);`,
-            width: `${config.fontSize * info.ratio * 1.1}px`,
+            margin: `-${editorConfig.fontSize}px 2px; transform: translate(-2px, 3px);`,
+            width: `${editorConfig.fontSize * info.ratio * 1.1}px`,
           },
         },
         hoverMessage: await getIconMarkdown(key),

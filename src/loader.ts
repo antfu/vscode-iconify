@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer'
-import type { IconifyIcon, IconifyJSON } from '@iconify/iconify'
+import type { IconifyIcon, IconifyJSON } from '@iconify/types'
 import { $fetch } from 'ofetch'
 import { Uri, workspace } from 'vscode'
 import { extensionContext } from 'reactive-vscode'

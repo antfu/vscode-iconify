@@ -4,27 +4,22 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  reactive-vscode@0.2.0-beta.3:
-    hash: pk6wmxndp5if37e3ncma5mhrwu
-    path: patches/reactive-vscode@0.2.0-beta.3.patch
-
 importers:
 
   .:
     devDependencies:
       '@antfu/eslint-config':
-        specifier: ^2.22.2
-        version: 2.22.2(@vue/compiler-sfc@3.3.13)(eslint@9.7.0)(typescript@5.5.3)
+        specifier: ^2.22.3
+        version: 2.22.3(@vue/compiler-sfc@3.3.13)(eslint@9.7.0)(typescript@5.5.3)
       '@antfu/utils':
         specifier: ^0.7.10
         version: 0.7.10
-      '@iconify/iconify':
-        specifier: ^3.1.1
-        version: 3.1.1
       '@iconify/json':
-        specifier: ^2.2.227
-        version: 2.2.227
+        specifier: ^2.2.228
+        version: 2.2.228
+      '@iconify/types':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -34,9 +29,6 @@ importers:
       '@types/vscode':
         specifier: 1.89.0
         version: 1.89.0
-      '@vue/reactivity':
-        specifier: ^3.4.31
-        version: 3.4.31
       bumpp:
         specifier: ^9.4.1
         version: 9.4.1
@@ -53,8 +45,8 @@ importers:
         specifier: ^1.3.4
         version: 1.3.4
       reactive-vscode:
-        specifier: 0.2.0-beta.3
-        version: 0.2.0-beta.3(patch_hash=pk6wmxndp5if37e3ncma5mhrwu)(@types/vscode@1.89.0)
+        specifier: ^0.2.0-beta.7
+        version: 0.2.0-beta.7(@types/vscode@1.89.0)
       tsup:
         specifier: ^8.1.0
         version: 8.1.0(postcss@8.4.39)(typescript@5.5.3)
@@ -67,8 +59,8 @@ importers:
 
 packages:
 
-  '@antfu/eslint-config@2.22.2':
-    resolution: {integrity: sha512-LKC61Rm1VC0CduV4XAZzzEQ1nmTd+H4Y1rVvNg47MgcaCVGftUpY50MD2us3QCC+ktt3AAQYT9Kmbr/nsFW73g==}
+  '@antfu/eslint-config@2.22.3':
+    resolution: {integrity: sha512-SVfcFowH4YNE+vOQojMwNssIlN9C93GtLQ7SfWMMWVD1LrnyQBpYbRb5PudJjDJQS6qjWiyFEEdBkcEUI1F2ag==}
     hasBin: true
     peerDependencies:
       '@eslint-react/eslint-plugin': ^1.5.8
@@ -332,12 +324,8 @@ packages:
     resolution: {integrity: sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==}
     engines: {node: '>=18.18'}
 
-  '@iconify/iconify@3.1.1':
-    resolution: {integrity: sha512-1nemfyD/OJzh9ALepH7YfuuP8BdEB24Skhd8DXWh0hzcOxImbb1ZizSZkpCzAwSZSGcJFmscIBaBQu+yLyWaxQ==}
-    deprecated: no longer maintained, switch to modern iconify-icon web component
-
-  '@iconify/json@2.2.227':
-    resolution: {integrity: sha512-MFSbYNpLJXHashfMAKox00XKK1ATEUMxOcqOBgdV+dsiscE9EOeApLpmyZ88+FQq7uDZea0l1YS63eSnVN5Yjw==}
+  '@iconify/json@2.2.228':
+    resolution: {integrity: sha512-Xd1CgQ1bCFLrp4t+J2TU+AXM+kVHAFLfhK9FcZD54aMPlzENdQMJ5JhfFzCgnsLBAIW1PbSY2Edbm4tt2Tw9Lg==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -388,8 +376,8 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@reactive-vscode/reactivity@0.2.0-beta.3':
-    resolution: {integrity: sha512-ggZqWGEv3suZrpXxuGoi49IjU8mMtZ7uk7TpchqUFFpy5mHQimNRDwgifgEx/f8VWcTJJE0rgYCz4Ps9fwk2fg==}
+  '@reactive-vscode/reactivity@0.2.0-beta.7':
+    resolution: {integrity: sha512-WvHZxHhr9FVnJS8DruucQ4vmB0IxHwaL9J0zcaVgg0DJ1yIGJQ7nl0tlPwD+u94xbZEAdY22enNU82ld9VPp2Q==}
 
   '@rollup/rollup-android-arm-eabi@4.18.1':
     resolution: {integrity: sha512-lncuC4aHicncmbORnx+dUaAgzee9cm/PbIqgWz1PpXuwc+sa1Ct83tnqUDy/GFKleLiN7ZIeytM6KJ4cAn1SxA==}
@@ -659,14 +647,8 @@ packages:
   '@vue/reactivity-transform@3.3.13':
     resolution: {integrity: sha512-oWnydGH0bBauhXvh5KXUy61xr9gKaMbtsMHk40IK9M4gMuKPJ342tKFarY0eQ6jef8906m35q37wwA8DMZOm5Q==}
 
-  '@vue/reactivity@3.4.31':
-    resolution: {integrity: sha512-VGkTani8SOoVkZNds1PfJ/T1SlAIOf8E58PGAhIOUDYPC4GAmFA2u/E14TDAFcf3vVDKunc4QqCe/SHr8xC65Q==}
-
   '@vue/shared@3.3.13':
     resolution: {integrity: sha512-/zYUwiHD8j7gKx2argXEMCUXVST6q/21DFU0sTfNX0URJroCe3b1UF6vLJ3lQDfLNIiiRl2ONp7Nh5UVWS6QnA==}
-
-  '@vue/shared@3.4.31':
-    resolution: {integrity: sha512-Yp3wtJk//8cO4NItOPpi3QkLExAr/aLBGZMmTtW9WpdwBCJpRM6zj9WgWktXAl8IDIozwNMByT45JP3tO3ACWA==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -1752,8 +1734,8 @@ packages:
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
 
-  reactive-vscode@0.2.0-beta.3:
-    resolution: {integrity: sha512-yhKif5ggsHnPYGPIQNN0/PwRytDKwra2pQOVF+bVqXSTZ1fXAM6x1E+vHXu5jyZ5sRcvOIbNvrb2uu+/ny45fw==}
+  reactive-vscode@0.2.0-beta.7:
+    resolution: {integrity: sha512-LBspJj/vSk+d2sphUbppIv2esOSw8VEKkUmZ5j3tXlsnmXg269nGT28Wo1rDL8y+HNwofKMgXrDEh+R49DrxYQ==}
     peerDependencies:
       '@types/vscode': ^1.89.0
 
@@ -2145,7 +2127,7 @@ packages:
 
 snapshots:
 
-  '@antfu/eslint-config@2.22.2(@vue/compiler-sfc@3.3.13)(eslint@9.7.0)(typescript@5.5.3)':
+  '@antfu/eslint-config@2.22.3(@vue/compiler-sfc@3.3.13)(eslint@9.7.0)(typescript@5.5.3)':
     dependencies:
       '@antfu/install-pkg': 0.3.3
       '@clack/prompts': 0.7.0
@@ -2354,11 +2336,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.3.0': {}
 
-  '@iconify/iconify@3.1.1':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify/json@2.2.227':
+  '@iconify/json@2.2.228':
     dependencies:
       '@iconify/types': 2.0.0
       pathe: 1.1.2
@@ -2415,7 +2393,7 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@reactive-vscode/reactivity@0.2.0-beta.3': {}
+  '@reactive-vscode/reactivity@0.2.0-beta.7': {}
 
   '@rollup/rollup-android-arm-eabi@4.18.1':
     optional: true
@@ -2741,13 +2719,7 @@ snapshots:
       estree-walker: 2.0.2
       magic-string: 0.30.10
 
-  '@vue/reactivity@3.4.31':
-    dependencies:
-      '@vue/shared': 3.4.31
-
   '@vue/shared@3.3.13': {}
-
-  '@vue/shared@3.4.31': {}
 
   acorn-jsx@5.3.2(acorn@8.12.0):
     dependencies:
@@ -3893,9 +3865,9 @@ snapshots:
       defu: 6.1.4
       destr: 2.0.3
 
-  reactive-vscode@0.2.0-beta.3(patch_hash=pk6wmxndp5if37e3ncma5mhrwu)(@types/vscode@1.89.0):
+  reactive-vscode@0.2.0-beta.7(@types/vscode@1.89.0):
     dependencies:
-      '@reactive-vscode/reactivity': 0.2.0-beta.3
+      '@reactive-vscode/reactivity': 0.2.0-beta.7
       '@types/vscode': 1.89.0
 
   read-pkg-up@7.0.1:
