@@ -1,143 +1,123 @@
 import { isAbsolute, resolve } from 'node:path'
-import { ColorThemeKind, window, workspace } from 'vscode'
 import fs from 'fs-extra'
-import type { WritableComputedRef } from '@vue/reactivity'
-import { computed, reactive, ref } from '@vue/reactivity'
-import type { IconifyJSON } from '@iconify/iconify'
+import type { IconifyJSON } from '@iconify/types'
+import { computed, defineConfigObject, ref, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
 import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
 import { Log } from './utils'
-import * as meta from './generated/meta'
+import * as Meta from './generated/meta'
 
-const _configState = ref(0)
+export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
+  Meta.scopedConfigs.scope,
+  Meta.scopedConfigs.defaults,
+)
 
-function getConfig<T = any>(key: string): T | undefined {
-  return workspace
-    .getConfiguration()
-    .get<T>(key)
-}
-
-async function setConfig(key: string, value: any, isGlobal = true) {
-  // update value
-  return await workspace
-    .getConfiguration()
-    .update(key, value, isGlobal)
-}
-
-function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true) {
-  return computed({
-    get: () => {
-      // to force computed update
-      // eslint-disable-next-line no-unused-expressions
-      _configState.value
-      return getConfig<T>(key) ?? defaultValue
-    },
-    set: (v) => {
-      setConfig(key, v, isGlobal)
-    },
-  })
-}
+export const editorConfig = defineConfigObject(
+  'editor',
+  {
+    fontSize: 12,
+  },
+)
 
 function escapeRegExp(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-const configRaw = Object.fromEntries(
-  Object.entries(meta.configs)
-    .map(([key, value]) => [key, createConfigRef(value.key, value.default)]),
-) as { [KEY in keyof typeof meta.configs]: WritableComputedRef<meta.ConfigKeyTypeMap[meta.ConfigShorthandMap[KEY]]> }
-
-export const config = reactive({
-  ...configRaw,
-  fontSize: createConfigRef('editor.fontSize', 12),
-})
-
 export const customCollections = ref([] as IconifyJSON[])
 
-export async function LoadCustomCollections() {
-  const result = [] as IconifyJSON[]
-  const files = Array.from(
-    new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
-      if (isAbsolute(file))
-        return [file]
+export async function useCustomCollections() {
+  const workspaceFolders = useWorkspaceFolders()
 
-      const list: string[] = []
-      if (workspace?.workspaceFolders) {
-        for (const folder of workspace.workspaceFolders)
-          list.push(resolve(folder.uri.fsPath, file))
-      }
-      return list
-    })),
-  )
+  watchEffect(async () => {
+    const result = [] as IconifyJSON[]
+    const files = Array.from(
+      new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
+        if (isAbsolute(file))
+          return [file]
 
-  const existingFiles = files.filter((file) => {
-    const exists = fs.existsSync(file)
-    if (!exists)
-      Log.warning(`Custom collection file does not exist: ${file}`)
-    return exists
+        const list: string[] = []
+        if (workspaceFolders.value) {
+          for (const folder of workspaceFolders.value)
+            list.push(resolve(folder.uri.fsPath, file))
+        }
+        return list
+      })),
+    )
+
+    const existingFiles = files.filter((file) => {
+      const exists = fs.existsSync(file)
+      if (!exists)
+        Log.warn(`Custom collection file does not exist: ${file}`)
+      return exists
+    })
+
+    if (existingFiles.length) {
+      Log.info(`Loading custom collections from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
+
+      await Promise.all(existingFiles.map(async (file) => {
+        try {
+          result.push(await fs.readJSON(file))
+        }
+        catch {
+          Log.error(`Error on loading custom collection: ${file}`)
+        }
+      }))
+    }
+
+    customCollections.value = result
   })
-
-  if (existingFiles.length) {
-    Log.info(`Loading custom collections from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
-
-    await Promise.all(existingFiles.map(async (file) => {
-      try {
-        result.push(await fs.readJSON(file))
-      }
-      catch {
-        Log.error(`Error on loading custom collection: ${file}`)
-      }
-    }))
-  }
-
-  customCollections.value = result
 }
 
 export const customAliases = ref([] as Record<string, string>[])
 const customAliasesFiles = ref([] as string[])
 
-export async function LoadCustomAliases() {
-  const result = [] as Record<string, string>[]
-  const files = Array.from(
-    new Set(config.customAliasesJsonPaths.flatMap((file: string) => {
-      if (isAbsolute(file))
-        return [file]
+export async function useCustomAliases() {
+  const workspaceFolders = useWorkspaceFolders()
 
-      const list: string[] = []
-      if (workspace?.workspaceFolders) {
-        for (const folder of workspace.workspaceFolders)
-          list.push(resolve(folder.uri.fsPath, file))
-      }
-      return list
-    })),
-  )
+  watchEffect(async () => {
+    const result = [] as Record<string, string>[]
+    const files = Array.from(
+      new Set(config.customAliasesJsonPaths.flatMap((file: string) => {
+        if (isAbsolute(file))
+          return [file]
 
-  const existingFiles = files.filter((file) => {
-    const exists = fs.existsSync(file)
-    if (!exists)
-      Log.warning(`Custom aliases file does not exist: ${file}`)
-    return exists
+        const list: string[] = []
+        if (workspaceFolders.value) {
+          for (const folder of workspaceFolders.value)
+            list.push(resolve(folder.uri.fsPath, file))
+        }
+        return list
+      })),
+    )
+
+    const existingFiles = files.filter((file) => {
+      const exists = fs.existsSync(file)
+      if (!exists)
+        Log.warn(`Custom aliases file does not exist: ${file}`)
+      return exists
+    })
+
+    if (existingFiles.length) {
+      Log.info(`Loading custom aliases from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
+
+      await Promise.all(existingFiles.map(async (file) => {
+        try {
+          result.push(await fs.readJSON(file))
+        }
+        catch {
+          Log.error(`Error on loading custom aliases: ${file}`)
+        }
+      }))
+    }
+
+    customAliases.value = result
+    customAliasesFiles.value = existingFiles
   })
-
-  if (existingFiles.length) {
-    Log.info(`Loading custom aliases from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
-
-    await Promise.all(existingFiles.map(async (file) => {
-      try {
-        result.push(await fs.readJSON(file))
-      }
-      catch {
-        Log.error(`Error on loading custom aliases: ${file}`)
-      }
-    }))
-  }
-
-  customAliases.value = result
-  customAliasesFiles.value = existingFiles
 }
+
 export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
-  const excludes: string[] = config.excludes || []
+  const excludes = config.excludes as string[] || []
 
   return [
     ...includes.filter(i => !excludes.includes(i)),
@@ -236,40 +216,5 @@ export function parseIcon(str: string) {
   }
 }
 
-export const color = computed(() => {
-  return config.color === 'auto'
-    ? isDarkTheme()
-      ? '#eee'
-      : '#222'
-    : config.color
-})
-
-export async function onConfigUpdated() {
-  _configState.value = +new Date()
-  await Promise.all(
-    [LoadCustomCollections(), LoadCustomAliases()],
-  )
-}
-
-// First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name
-function isDarkTheme() {
-  const themeKind = window?.activeColorTheme?.kind
-  if (themeKind && (themeKind === ColorThemeKind?.Dark || themeKind === ColorThemeKind?.HighContrast))
-    return true
-
-  if (themeKind && (themeKind === ColorThemeKind?.Light || themeKind === ColorThemeKind?.HighContrastLight))
-    return false
-
-  const theme = createConfigRef('workbench.colorTheme', '', true)
-
-  // must be dark
-  if (theme.value.match(/dark|black/i) != null)
-    return true
-
-  // must be light
-  if (theme.value.match(/light/i) != null)
-    return false
-
-  // IDK, maybe dark
-  return true
-}
+const isDark = useIsDarkTheme()
+export const color = computed(() => isDark.value ? '#eee' : '#222')

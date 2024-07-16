@@ -1,9 +1,11 @@
-import type { CompletionItemProvider, ExtensionContext, TextDocument } from 'vscode'
+import type { CompletionItemProvider, TextDocument } from 'vscode'
 import { CompletionItem, CompletionItemKind, Position, Range, languages } from 'vscode'
+import { extensionContext } from 'reactive-vscode'
 import { getCollectionMarkdown, getIconMarkdown } from './markdown'
 import { REGEX_NAMESPACE, REGEX_PREFIXED, config, enabledAliasIds, enabledCollectionIds, enabledCollections } from './config'
 
-export function RegisterCompletion(ctx: ExtensionContext) {
+export function useCompletion() {
+  const ctx = extensionContext.value!
   const iconProvider: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position) {
       const line = document.getText(new Range(new Position(position.line, 0), new Position(position.line, position.character)))
@@ -46,7 +48,7 @@ export function RegisterCompletion(ctx: ExtensionContext) {
     async resolveCompletionItem(item: CompletionItem) {
       return {
         ...item,
-        documentation: await getIconMarkdown(ctx, item.detail!),
+        documentation: await getIconMarkdown(item.detail!),
       }
     },
   }

@@ -2,7 +2,7 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import fs from 'fs-extra'
 import type { IconifyMetaDataCollection } from '@iconify/json'
-import type { IconifyJSON } from '@iconify/iconify'
+import type { IconifyJSON } from '@iconify/types'
 import type { IconsetMeta } from '../src/collections'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
