@@ -1,8 +1,8 @@
 import { isAbsolute, resolve } from 'node:path'
-import { ColorThemeKind, window, workspace } from 'vscode'
+import { workspace } from 'vscode'
 import fs from 'fs-extra'
 import type { IconifyJSON } from '@iconify/types'
-import { computed, defineConfigObject, ref, shallowReactive } from 'reactive-vscode'
+import { computed, defineConfigObject, ref, shallowReactive, useIsDarkTheme } from 'reactive-vscode'
 import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
 import { Log } from './utils'
@@ -208,39 +208,11 @@ export function parseIcon(str: string) {
   }
 }
 
-export const color = computed(() => {
-  return config.color === 'auto'
-    ? isDarkTheme()
-      ? '#eee'
-      : '#222'
-    : config.color
-})
+export const isDark = useIsDarkTheme()
+export const color = computed(() => isDark.value ? '#eee' : '#222')
 
 export async function onConfigUpdated() {
   await Promise.all(
     [LoadCustomCollections(), LoadCustomAliases()],
   )
-}
-
-// First try the activeColorThemeKind (if available) otherwise apply regex on the color theme's name
-function isDarkTheme() {
-  const themeKind = window?.activeColorTheme?.kind
-  if (themeKind && (themeKind === ColorThemeKind?.Dark || themeKind === ColorThemeKind?.HighContrast))
-    return true
-
-  if (themeKind && (themeKind === ColorThemeKind?.Light || themeKind === ColorThemeKind?.HighContrastLight))
-    return false
-
-  const theme = workspace.getConfiguration().get('workbench.colorTheme', '')
-
-  // must be dark
-  if (theme.match(/dark|black/i) != null)
-    return true
-
-  // must be light
-  if (theme.match(/light/i) != null)
-    return false
-
-  // IDK, maybe dark
-  return true
 }
