@@ -29,7 +29,7 @@ export function useAnnotations() {
   useActiveEditorDecorations(InlineIconDecoration, decorations)
   useActiveEditorDecorations(HideTextDecoration, () => decorations.value
     .map(({ range }) => range)
-    .filter(i => !selections.value.map(({ start }) => start.line).includes(i.start.line)))
+    .filter(i => config.inplace && !selections.value.map(({ start }) => start.line).includes(i.start.line)))
 
   // Calculate decorations
   watchEffect(async () => {
