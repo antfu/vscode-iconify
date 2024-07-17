@@ -27,9 +27,14 @@ export function useAnnotations() {
   const decorations = shallowRef<DecorationMatch[]>([])
 
   useActiveEditorDecorations(InlineIconDecoration, decorations)
-  useActiveEditorDecorations(HideTextDecoration, () => decorations.value
-    .map(({ range }) => range)
-    .filter(i => !selections.value.map(({ start }) => start.line).includes(i.start.line)))
+  useActiveEditorDecorations(
+    HideTextDecoration,
+    () => config.inplace
+      ? decorations.value
+        .map(({ range }) => range)
+        .filter(i => !selections.value.map(({ start }) => start.line).includes(i.start.line))
+      : [],
+  )
 
   // Calculate decorations
   watchEffect(async () => {
