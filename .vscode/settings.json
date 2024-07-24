@@ -43,7 +43,9 @@
     "markdown",
     "json",
     "jsonc",
-    "yaml"
+    "yaml",
+    "markdown",
+    "mdx"
   ],
   "cSpell.words": [
     "Inplace"

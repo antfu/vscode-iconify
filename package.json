@@ -43,7 +43,9 @@
     "onLanguage:svelte",
     "onLanguage:html",
     "onLanguage:django-html",
-    "onLanguage:css"
+    "onLanguage:css",
+    "onLanguage:markdown",
+    "onLanguage:mdx"
   ],
   "contributes": {
     "snippets": [
@@ -152,7 +154,9 @@
             "html",
             "pug",
             "json",
-            "yaml"
+            "yaml",
+            "markdown",
+            "mdx"
           ],
           "description": "Array of language IDs to enable annotations"
         },
