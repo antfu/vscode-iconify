@@ -565,6 +565,24 @@
           "type": "boolean",
           "default": false,
           "description": "Only use the icon aliases. Non aliased icons will be ignored."
+        },
+        "iconify.preview.include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/*"
+          ],
+          "description": "Glob patterns for file paths to enable icon preview"
+        },
+        "iconify.preview.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Glob patterns for file paths to disable icon preview"
         }
       }
     }

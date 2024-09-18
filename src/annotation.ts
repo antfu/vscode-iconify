@@ -1,5 +1,5 @@
 import type { DecorationOptions } from 'vscode'
-import { DecorationRangeBehavior, Range, Uri, window } from 'vscode'
+import { DecorationRangeBehavior, Range, Uri, languages, window } from 'vscode'
 import { shallowRef, useActiveEditorDecorations, useActiveTextEditor, useDocumentText, useTextEditorSelections, watchEffect } from 'reactive-vscode'
 import { REGEX_COLLECTION_ICON, REGEX_FULL, config, editorConfig, isCustomAliasesFile } from './config'
 import { getDataURL, getIconInfo } from './loader'
@@ -46,8 +46,20 @@ export function useAnnotations() {
       return
     }
 
+    const { document } = editor.value
+    const previewIncludePatterns = config['preview.include']
+    const previewExcludePatterns = config['preview.exclude']
+
+    const shouldPreview = previewIncludePatterns.some(pattern => languages.match({ pattern }, document))
+      && !previewExcludePatterns.some(pattern => languages.match({ pattern }, document))
+
+    if (!shouldPreview) {
+      decorations.value = []
+      return
+    }
+
     let match
-    const isAliasesFile = isCustomAliasesFile(editor.value.document.uri.path)
+    const isAliasesFile = isCustomAliasesFile(document.uri.path)
     const regex = isAliasesFile ? REGEX_COLLECTION_ICON.value : REGEX_FULL.value
     regex.lastIndex = 0
     const keys: [Range, string][] = []
@@ -58,8 +70,8 @@ export function useAnnotations() {
       if (!key)
         continue
 
-      const startPos = editor.value.document.positionAt(match.index + 1)
-      const endPos = editor.value.document.positionAt(match.index + match[0].length)
+      const startPos = document.positionAt(match.index + 1)
+      const endPos = document.positionAt(match.index + match[0].length)
       keys.push([new Range(startPos, endPos), key])
     }
 
