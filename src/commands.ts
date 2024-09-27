@@ -1,8 +1,8 @@
 import type { DecorationOptions } from 'vscode'
 import { useCommand } from 'reactive-vscode'
 import { config } from './config'
-import { clearCache } from './loader'
 import * as meta from './generated/meta'
+import { clearCache } from './loader'
 
 export interface DecorationMatch extends DecorationOptions {
   key: string

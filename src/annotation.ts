@@ -1,11 +1,11 @@
 import type { DecorationOptions } from 'vscode'
-import { DecorationRangeBehavior, Range, Uri, window } from 'vscode'
 import { shallowRef, useActiveEditorDecorations, useActiveTextEditor, useDocumentText, useTextEditorSelections, watchEffect } from 'reactive-vscode'
-import { REGEX_COLLECTION_ICON, REGEX_FULL, config, editorConfig, isCustomAliasesFile } from './config'
+import { DecorationRangeBehavior, Range, Uri, window } from 'vscode'
+import { config, editorConfig, isCustomAliasesFile, REGEX_COLLECTION_ICON, REGEX_FULL } from './config'
 import { getDataURL, getIconInfo } from './loader'
-import { isTruthy } from './utils'
-
 import { getIconMarkdown } from './markdown'
+
+import { isTruthy } from './utils'
 
 export interface DecorationMatch extends DecorationOptions {
   key: string

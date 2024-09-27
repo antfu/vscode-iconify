@@ -1,11 +1,11 @@
-import { Buffer } from 'node:buffer'
 import type { IconifyIcon, IconifyJSON } from '@iconify/types'
+import { Buffer } from 'node:buffer'
 import { $fetch } from 'ofetch'
-import { Uri, workspace } from 'vscode'
 import { extensionContext } from 'reactive-vscode'
-import { pathToSvg, toDataUrl } from './utils/svgs'
-import { Log } from './utils'
+import { Uri, workspace } from 'vscode'
 import { color, config, customCollections, enabledAliases, parseIcon } from './config'
+import { Log } from './utils'
+import { pathToSvg, toDataUrl } from './utils/svgs'
 
 let loadedIconSets: Record<string, IconifyJSON> = {}
 let dataURLCache: Record<string, string> = {}

@@ -1,11 +1,11 @@
+import type { IconifyJSON } from '@iconify/types'
+import type { IconsetMeta } from './collections'
 import { isAbsolute, resolve } from 'node:path'
 import fs from 'fs-extra'
-import type { IconifyJSON } from '@iconify/types'
 import { computed, defineConfigObject, ref, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
-import type { IconsetMeta } from './collections'
 import { collectionIds, collections } from './collections'
-import { Log } from './utils'
 import * as Meta from './generated/meta'
+import { Log } from './utils'
 
 export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
   Meta.scopedConfigs.scope,
