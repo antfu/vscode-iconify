@@ -6,6 +6,7 @@ import { computed, defineConfigObject, ref, shallowReactive, useFsWatcher, useIs
 import { Uri } from 'vscode'
 import { collectionIds, collections } from './collections'
 import * as Meta from './generated/meta'
+import { deleteTask } from './loader'
 import { Log } from './utils'
 
 export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
@@ -58,7 +59,9 @@ export async function useCustomCollections() {
   async function load(url: URL) {
     Log.info(`Loading custom collections from:\n${url}`)
     try {
-      result.set(url.href, await fs.readJSON(url))
+      const val: IconifyJSON = await fs.readJSON(url)
+      result.set(url.href, val)
+      deleteTask(val.prefix)
     }
     catch {
       Log.error(`Error on loading custom collection: ${url}`)
