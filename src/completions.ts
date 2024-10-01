@@ -1,8 +1,8 @@
 import type { CompletionItemProvider, TextDocument } from 'vscode'
-import { CompletionItem, CompletionItemKind, Position, Range, languages } from 'vscode'
 import { extensionContext } from 'reactive-vscode'
+import { CompletionItem, CompletionItemKind, languages, Position, Range } from 'vscode'
+import { config, enabledAliasIds, enabledCollectionIds, enabledCollections, REGEX_NAMESPACE, REGEX_PREFIXED } from './config'
 import { getCollectionMarkdown, getIconMarkdown } from './markdown'
-import { REGEX_NAMESPACE, REGEX_PREFIXED, config, enabledAliasIds, enabledCollectionIds, enabledCollections } from './config'
 
 export function useCompletion() {
   const ctx = extensionContext.value!
