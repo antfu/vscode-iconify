@@ -5,5 +5,8 @@
   ],
   "iconify.delimiters": [
     ":"
+  ],
+  "iconify.preview.exclude": [
+    "**/exclude/**/*"
   ]
 }
