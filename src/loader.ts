@@ -18,6 +18,9 @@ export function UniqPromise<T>(fn: (id: string) => Promise<T>) {
     return await _tasks[id]
   }
 }
+export function deleteTask(id: string) {
+  return delete _tasks[id]
+}
 
 function getCacheUri() {
   return Uri.joinPath(extensionContext.value!.globalStorageUri, 'icon-set-cache')
