@@ -221,7 +221,7 @@ export function parseIcon(str: string) {
     return
 
   return {
-    collection: config.customCollectionIdsMap[collection] ?? collection,
+    collection: String(config.customCollectionIdsMap[collection] ?? collection),
     icon,
   }
 }
