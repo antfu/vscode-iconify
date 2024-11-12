@@ -133,7 +133,7 @@ export const enabledCollectionIds = computed(() => {
     ...includes.filter(i => !excludes.includes(i)),
     ...(Object.keys(config.customCollectionIdsMap)),
     ...customCollections.value.map(c => c.prefix),
-  ]
+  ].sort().reverse()
 })
 
 export const enabledCollections = computed<IconsetMeta[]>(() => {
