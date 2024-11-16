@@ -2,9 +2,11 @@ import type { IconifyJSON } from '@iconify/types'
 import type { IconsetMeta } from './collections'
 import { isAbsolute, resolve } from 'node:path'
 import fs from 'fs-extra'
-import { computed, defineConfigObject, ref, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
+import { computed, defineConfigObject, ref, shallowReactive, useFsWatcher, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
+import { Uri } from 'vscode'
 import { collectionIds, collections } from './collections'
 import * as Meta from './generated/meta'
+import { deleteTask } from './loader'
 import { Log } from './utils'
 
 export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
@@ -28,8 +30,9 @@ export const customCollections = ref([] as IconifyJSON[])
 export async function useCustomCollections() {
   const workspaceFolders = useWorkspaceFolders()
 
-  watchEffect(async () => {
-    const result = [] as IconifyJSON[]
+  /** key is URL.href */
+  const result = shallowReactive(new Map<string, IconifyJSON>())
+  const iconifyJsonPaths = computed(() => {
     const files = Array.from(
       new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
         if (isAbsolute(file))
@@ -44,28 +47,35 @@ export async function useCustomCollections() {
       })),
     )
 
-    const existingFiles = files.filter((file) => {
+    return files.filter((file) => {
       const exists = fs.existsSync(file)
       if (!exists)
         Log.warn(`Custom collection file does not exist: ${file}`)
       return exists
     })
-
-    if (existingFiles.length) {
-      Log.info(`Loading custom collections from:\n${existingFiles.map(i => `  - ${i}`).join('\n')}`)
-
-      await Promise.all(existingFiles.map(async (file) => {
-        try {
-          result.push(await fs.readJSON(file))
-        }
-        catch {
-          Log.error(`Error on loading custom collection: ${file}`)
-        }
-      }))
-    }
-
-    customCollections.value = result
   })
+  const { onDidChange, onDidDelete, onDidCreate } = useFsWatcher(iconifyJsonPaths)
+
+  async function load(url: URL) {
+    Log.info(`Loading custom collections from:\n${url}`)
+    try {
+      const val: IconifyJSON = await fs.readJSON(url)
+      result.set(url.href, val)
+      deleteTask(val.prefix)
+    }
+    catch {
+      Log.error(`Error on loading custom collection: ${url}`)
+    }
+  }
+
+  // Initial load
+  iconifyJsonPaths.value.forEach(p => load(new URL(Uri.file(p))))
+
+  onDidChange(uri => load(new URL(uri)))
+  onDidCreate(uri => load(new URL(uri)))
+  onDidDelete(uri => result.delete(new URL(uri).href))
+
+  watchEffect(() => customCollections.value = Array.from(result.values()))
 }
 
 export const customAliases = ref([] as Record<string, string>[])
@@ -211,7 +221,7 @@ export function parseIcon(str: string) {
     return
 
   return {
-    collection: config.customCollectionIdsMap[collection] ?? collection,
+    collection: String(config.customCollectionIdsMap[collection] ?? collection),
     icon,
   }
 }
