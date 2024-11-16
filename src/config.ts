@@ -133,18 +133,7 @@ export const enabledCollectionIds = computed(() => {
     ...includes.filter(i => !excludes.includes(i)),
     ...(Object.keys(config.customCollectionIdsMap)),
     ...customCollections.value.map(c => c.prefix),
-  ].sort().reverse()
-})
-
-export const enabledCollections = computed<IconsetMeta[]>(() => {
-  const customData: IconsetMeta[] = customCollections.value.map(c => ({
-    id: c.prefix,
-    name: c.info?.name,
-    author: c.info?.author.name,
-    icons: Object.keys(c.icons),
-    height: c.info?.height,
-  }))
-  return [...collections, ...customData]
+  ].sort((a, b) => b.length - a.length)
 })
 
 export const enabledAliases = computed((): Record<string, string> => {
