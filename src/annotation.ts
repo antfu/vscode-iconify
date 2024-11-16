@@ -1,6 +1,6 @@
 import type { DecorationOptions } from 'vscode'
 import { shallowRef, useActiveEditorDecorations, useActiveTextEditor, useDocumentText, useTextEditorSelections, watchEffect } from 'reactive-vscode'
-import { DecorationRangeBehavior, Range, Uri, window, languages } from 'vscode'
+import { DecorationRangeBehavior, languages, Range, Uri, window } from 'vscode'
 import { config, editorConfig, isCustomAliasesFile, REGEX_COLLECTION_ICON, REGEX_FULL } from './config'
 import { getDataURL, getIconInfo } from './loader'
 import { getIconMarkdown } from './markdown'
