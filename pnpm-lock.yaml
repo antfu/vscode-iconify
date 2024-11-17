@@ -45,8 +45,8 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1
       reactive-vscode:
-        specifier: ^0.2.7
-        version: 0.2.7(@types/vscode@1.95.0)
+        specifier: 0.2.5
+        version: 0.2.5(@types/vscode@1.95.0)
       tsup:
         specifier: ^8.3.5
         version: 8.3.5(jiti@1.21.6)(postcss@8.4.39)(tsx@4.19.1)(typescript@5.6.3)(yaml@2.4.5)
@@ -574,8 +574,8 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@reactive-vscode/reactivity@0.2.7':
-    resolution: {integrity: sha512-o8oHPo07zYx/oyvIeBBFvmrUFVYOWuXJz/0GfLFiX85FvCGKtfaAMxXrzlJ/zWsJyCM2uYGilnSmmePQNOFh9g==}
+  '@reactive-vscode/reactivity@0.2.5':
+    resolution: {integrity: sha512-Oq6V7gQ0WI7TKbBkY2xLE2aKqIZjs30sMcj+Bv2boqjwBWGQrnnOGOpDKMKtTUBDZnY7WdPgtiL9u92Kn+2qUw==}
 
   '@rollup/rollup-android-arm-eabi@4.27.2':
     resolution: {integrity: sha512-Tj+j7Pyzd15wAdSJswvs5CJzJNV+qqSUcr/aCD+jpQSBtXvGnV0pnrjoc8zFTe9fcKCatkpFpOO7yAzpO998HA==}
@@ -1930,9 +1930,6 @@ packages:
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
-  picocolors@1.1.0:
-    resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -1999,8 +1996,8 @@ packages:
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
 
-  reactive-vscode@0.2.7:
-    resolution: {integrity: sha512-iaNcSYBWG3muX/6LYAo3l9cVKIJ65VUyskDNAKSIB/u8VsO6j2RSN++kl83ovj5JI1xsfMwGyvZgQscMWE7jOg==}
+  reactive-vscode@0.2.5:
+    resolution: {integrity: sha512-CknY2aedEzSfUhlOplIutBC6+xNvhrcz8rcS6UKTeyqHIfDz7pc6c/tlEboChqEeZvSXHhoo7FYoiYjR5pb2og==}
     peerDependencies:
       '@types/vscode': ^1.89.0
 
@@ -2780,7 +2777,7 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@reactive-vscode/reactivity@0.2.7': {}
+  '@reactive-vscode/reactivity@0.2.5': {}
 
   '@rollup/rollup-android-arm-eabi@4.27.2':
     optional: true
@@ -4397,8 +4394,6 @@ snapshots:
 
   perfect-debounce@1.0.0: {}
 
-  picocolors@1.1.0: {}
-
   picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
@@ -4432,7 +4427,7 @@ snapshots:
   postcss@8.4.39:
     dependencies:
       nanoid: 3.3.7
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       source-map-js: 1.2.0
 
   prelude-ls@1.2.1: {}
@@ -4451,9 +4446,9 @@ snapshots:
       defu: 6.1.4
       destr: 2.0.3
 
-  reactive-vscode@0.2.7(@types/vscode@1.95.0):
+  reactive-vscode@0.2.5(@types/vscode@1.95.0):
     dependencies:
-      '@reactive-vscode/reactivity': 0.2.7
+      '@reactive-vscode/reactivity': 0.2.5
       '@types/vscode': 1.95.0
 
   read-pkg-up@7.0.1:

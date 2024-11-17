@@ -47,11 +47,14 @@ export function useAnnotations() {
     }
 
     const { document } = editor.value
-    const previewIncludePatterns = config['preview.include']
-    const previewExcludePatterns = config['preview.exclude']
+    const previewIncludePatterns = config['preview.include'] || []
+    const previewExcludePatterns = config['preview.exclude'] || []
 
-    const shouldPreview = previewIncludePatterns.some(pattern => languages.match({ pattern }, document))
-      && !previewExcludePatterns.some(pattern => languages.match({ pattern }, document))
+    let shouldPreview = previewIncludePatterns.length
+      ? previewIncludePatterns.some(pattern => !!languages.match({ pattern }, document))
+      : true
+    if (previewExcludePatterns.length && previewExcludePatterns.some(pattern => !!languages.match({ pattern }, document)))
+      shouldPreview = false
 
     if (!shouldPreview) {
       decorations.value = []
@@ -61,6 +64,8 @@ export function useAnnotations() {
     let match
     const isAliasesFile = isCustomAliasesFile(document.uri.path)
     const regex = isAliasesFile ? REGEX_COLLECTION_ICON.value : REGEX_FULL.value
+    if (!regex)
+      return
     regex.lastIndex = 0
     const keys: [Range, string][] = []
 

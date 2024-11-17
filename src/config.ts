@@ -2,7 +2,7 @@ import type { IconifyJSON } from '@iconify/types'
 import type { IconsetMeta } from './collections'
 import { isAbsolute, resolve } from 'node:path'
 import fs from 'fs-extra'
-import { computed, defineConfigObject, ref, shallowReactive, useFsWatcher, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
+import { computed, defineConfigObject, ref, shallowReactive, shallowRef, useFsWatcher, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
 import { Uri } from 'vscode'
 import { collectionIds, collections } from './collections'
 import * as Meta from './generated/meta'
@@ -14,7 +14,9 @@ export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
   Meta.scopedConfigs.defaults,
 )
 
-export const editorConfig = defineConfigObject(
+export const editorConfig = defineConfigObject<{
+  fontSize: number
+}>(
   'editor',
   {
     fontSize: 12,
@@ -25,7 +27,7 @@ function escapeRegExp(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-export const customCollections = ref([] as IconifyJSON[])
+export const customCollections = shallowRef([] as IconifyJSON[])
 
 export async function useCustomCollections() {
   const workspaceFolders = useWorkspaceFolders()
@@ -129,11 +131,13 @@ export const enabledCollectionIds = computed(() => {
   const includes = config.includes?.length ? config.includes : collectionIds
   const excludes = config.excludes as string[] || []
 
-  return [
+  const collections = [
     ...includes.filter(i => !excludes.includes(i)),
     ...(Object.keys(config.customCollectionIdsMap)),
     ...customCollections.value.map(c => c.prefix),
-  ].sort((a, b) => b.length - a.length)
+  ]
+  collections.sort((a, b) => b.length - a.length)
+  return collections
 })
 
 export const enabledCollections = computed<IconsetMeta[]>(() => {
@@ -201,7 +205,6 @@ export const REGEX_COLLECTION_ICON = computed(() => {
 export const REGEX_FULL = computed(() => {
   if (config.customAliasesOnly)
     return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledAliasIds.value.join('|')})${RE_PART_SUFFIXES.value}(?=\\b[^-])`, 'g')
-
   return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}((?:(?:${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]+)|(?:${enabledAliasIds.value.join('|')}))${RE_PART_SUFFIXES.value}(?=\\b[^-])`, 'g')
 })
 
