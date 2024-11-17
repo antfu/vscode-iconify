@@ -47,8 +47,8 @@ export function useAnnotations() {
     }
 
     const { document } = editor.value
-    const previewIncludePatterns = config['preview.include'] || []
-    const previewExcludePatterns = config['preview.exclude'] || []
+    const previewIncludePatterns = config.preview.include || []
+    const previewExcludePatterns = config.preview.exclude || []
 
     let shouldPreview = previewIncludePatterns.length
       ? previewIncludePatterns.some(pattern => !!languages.match({ pattern }, document))
