@@ -27,8 +27,14 @@
     "Visualization",
     "Snippets"
   ],
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "icon": "res/logo.png",
+  "files": [
+    "LICENSE.md",
+    "dist/*",
+    "res/*",
+    "snippets/*"
+  ],
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -633,6 +639,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.9.0",
     "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.2.1",
     "bumpp": "^9.8.1",
     "eslint": "^9.15.0",
     "esno": "^4.8.0",
