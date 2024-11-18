@@ -9,7 +9,7 @@ import * as Meta from './generated/meta'
 import { deleteTask } from './loader'
 import { Log } from './utils'
 
-export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
+export const config = defineConfigObject<Meta.NestedScopedConfigs>(
   Meta.scopedConfigs.scope,
   Meta.scopedConfigs.defaults,
 )

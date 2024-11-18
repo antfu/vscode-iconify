@@ -645,7 +645,7 @@
     "esno": "^4.8.0",
     "fs-extra": "^11.2.0",
     "ofetch": "^1.4.1",
-    "reactive-vscode": "0.2.5",
+    "reactive-vscode": "^0.2.8",
     "tsup": "^8.3.5",
     "typescript": "^5.6.3",
     "vscode-ext-gen": "^0.5.0"
