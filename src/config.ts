@@ -7,7 +7,7 @@ import { Uri } from 'vscode'
 import { collectionIds, collections } from './collections'
 import * as Meta from './generated/meta'
 import { deleteTask } from './loader'
-import { Log } from './utils'
+import { Log, readJSON } from './utils'
 
 export const config = defineConfigObject<Meta.NestedScopedConfigs>(
   Meta.scopedConfigs.scope,
@@ -61,7 +61,7 @@ export async function useCustomCollections() {
   async function load(url: URL) {
     Log.info(`Loading custom collections from:\n${url}`)
     try {
-      const val: IconifyJSON = await fs.readJSON(url)
+      const val: IconifyJSON = await readJSON(url)
       result.set(url.href, val)
       deleteTask(val.prefix)
     }
@@ -114,7 +114,7 @@ export async function useCustomAliases() {
 
       await Promise.all(existingFiles.map(async (file) => {
         try {
-          result.push(await fs.readJSON(file))
+          result.push(await readJSON(file))
         }
         catch {
           Log.error(`Error on loading custom aliases: ${file}`)
