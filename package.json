@@ -5,7 +5,7 @@
   "type": "commonjs",
   "version": "0.10.2",
   "private": true,
-  "packageManager": "pnpm@9.13.2",
+  "packageManager": "pnpm@9.15.4",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "license": "MIT",
   "homepage": "https://github.com/antfu/vscode-iconify",
@@ -36,7 +36,7 @@
     "snippets/*"
   ],
   "engines": {
-    "vscode": "^1.95.0"
+    "vscode": "^1.96.0"
   },
   "activationEvents": [
     "workspaceContains:package.json",
@@ -195,6 +195,7 @@
               "circle-flags",
               "circum",
               "clarity",
+              "codex",
               "codicon",
               "covid",
               "cryptocurrency",
@@ -224,6 +225,7 @@
               "fa6-regular",
               "fa6-solid",
               "fad",
+              "famicons",
               "fe",
               "feather",
               "file-icons",
@@ -245,6 +247,7 @@
               "fxemoji",
               "gala",
               "game-icons",
+              "garden",
               "geo",
               "gg",
               "gis",
@@ -394,6 +397,7 @@
               "circle-flags",
               "circum",
               "clarity",
+              "codex",
               "codicon",
               "covid",
               "cryptocurrency",
@@ -423,6 +427,7 @@
               "fa6-regular",
               "fa6-solid",
               "fad",
+              "famicons",
               "fe",
               "feather",
               "file-icons",
@@ -444,6 +449,7 @@
               "fxemoji",
               "gala",
               "game-icons",
+              "garden",
               "geo",
               "gg",
               "gis",
@@ -632,23 +638,23 @@
     "release": "bumpp && nr publish"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.9.1",
-    "@antfu/utils": "^0.7.10",
-    "@iconify/json": "^2.2.273",
+    "@antfu/eslint-config": "^3.14.0",
+    "@antfu/utils": "^8.1.0",
+    "@iconify/json": "^2.2.295",
     "@iconify/types": "^2.0.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.9.0",
-    "@types/vscode": "^1.95.0",
+    "@types/node": "^22.10.6",
+    "@types/vscode": "^1.96.0",
     "@vscode/vsce": "^3.2.1",
-    "bumpp": "^9.8.1",
-    "eslint": "^9.15.0",
+    "bumpp": "^9.10.0",
+    "eslint": "^9.18.0",
     "esno": "^4.8.0",
     "fs-extra": "^11.2.0",
     "ofetch": "^1.4.1",
-    "reactive-vscode": "^0.2.8",
+    "reactive-vscode": "^0.2.9",
     "strip-json-comments": "^5.0.1",
     "tsup": "^8.3.5",
-    "typescript": "^5.6.3",
-    "vscode-ext-gen": "^0.5.0"
+    "typescript": "^5.7.3",
+    "vscode-ext-gen": "^0.5.5"
   }
 }

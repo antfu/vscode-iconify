@@ -31,8 +31,8 @@ export function useAnnotations() {
     HideTextDecoration,
     () => config.inplace
       ? decorations.value
-        .map(({ range }) => range)
-        .filter(i => !selections.value.map(({ start }) => start.line).includes(i.start.line))
+          .map(({ range }) => range)
+          .filter(i => !selections.value.map(({ start }) => start.line).includes(i.start.line))
       : [],
   )
 
