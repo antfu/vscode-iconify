@@ -14,7 +14,10 @@ export function useCompletion() {
       if (!prefixMatch)
         return null
 
-      const range = new Range(position.line, position.character, position.line, position.character)
+      // Index of the first character after the prefix
+      const startIndex = prefixMatch.index! + 1
+
+      const range = new Range(position.line, startIndex, position.line, position.character)
       const aliasCompletion = enabledAliasIds.value.map((i) => {
         const item = new CompletionItem(i, CompletionItemKind.Text)
         item.detail = `alias: ${i}`
