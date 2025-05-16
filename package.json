@@ -5,7 +5,7 @@
   "type": "commonjs",
   "version": "0.10.3",
   "private": true,
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.11.0",
   "description": "Intelligent Iconify previewing and searching for VS Code",
   "license": "MIT",
   "homepage": "https://github.com/antfu/vscode-iconify",
@@ -36,7 +36,7 @@
     "snippets/*"
   ],
   "engines": {
-    "vscode": "^1.96.0"
+    "vscode": "^1.100.0"
   },
   "activationEvents": [
     "workspaceContains:package.json",
@@ -289,6 +289,7 @@
               "maki",
               "map",
               "marketeq",
+              "material-icon-theme",
               "material-symbols",
               "material-symbols-light",
               "mdi",
@@ -317,6 +318,8 @@
               "pepicons-pop",
               "pepicons-print",
               "ph",
+              "picon",
+              "pixel",
               "pixelarticons",
               "prime",
               "proicons",
@@ -491,6 +494,7 @@
               "maki",
               "map",
               "marketeq",
+              "material-icon-theme",
               "material-symbols",
               "material-symbols-light",
               "mdi",
@@ -519,6 +523,8 @@
               "pepicons-pop",
               "pepicons-print",
               "ph",
+              "picon",
+              "pixel",
               "pixelarticons",
               "prime",
               "proicons",
@@ -638,23 +644,23 @@
     "release": "bumpp && nr publish"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.14.0",
-    "@antfu/utils": "^8.1.0",
-    "@iconify/json": "^2.2.295",
+    "@antfu/eslint-config": "^4.13.0",
+    "@antfu/utils": "^9.2.0",
+    "@iconify/json": "^2.2.338",
     "@iconify/types": "^2.0.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.10.6",
-    "@types/vscode": "^1.96.0",
-    "@vscode/vsce": "^3.2.1",
-    "bumpp": "^9.10.0",
-    "eslint": "^9.18.0",
+    "@types/node": "^22.15.18",
+    "@types/vscode": "^1.100.0",
+    "@vscode/vsce": "^3.4.0",
+    "bumpp": "^10.1.1",
+    "eslint": "^9.26.0",
     "esno": "^4.8.0",
-    "fs-extra": "^11.2.0",
+    "fs-extra": "^11.3.0",
     "ofetch": "^1.4.1",
-    "reactive-vscode": "^0.2.9",
+    "reactive-vscode": "^0.2.17",
     "strip-json-comments": "^5.0.1",
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.3",
-    "vscode-ext-gen": "^0.5.5"
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3",
+    "vscode-ext-gen": "^1.0.2"
   }
 }
