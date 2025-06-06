@@ -33,34 +33,47 @@ export const customCollections = shallowRef([] as IconifyJSON[])
 export async function useCustomCollections() {
   const workspaceFolders = useWorkspaceFolders()
 
-  /** key is URL.href */
+  /**
+   * Map using URL.href as keys for unified handling of local/remote collections
+   */
   const result = shallowReactive(new Map<string, IconifyJSON>())
 
+  /**
+   * Separate local files from remote URLs for different loading/watching strategies
+   */
   const processedPaths = computed(() => {
     const localFilePaths: string[] = []
     const remoteUrlStrings: string[] = []
 
     config.customCollectionJsonPaths.forEach((pathString: string) => {
       let isUrl = false
+
+      // Parse URLs to detect remote collections and file:// URLs
       if (URL.canParse(pathString)) {
         const url = new URL(pathString)
         const isHttp = url.protocol === 'http:' || url.protocol === 'https:'
         const isFile = url.protocol === 'file:'
-        if (isHttp)
-          remoteUrlStrings.push(pathString) // Store the original string
-        else if (isFile)
+
+        if (isHttp) {
+          remoteUrlStrings.push(pathString)
+        }
+        else if (isFile) {
           localFilePaths.push(Uri.parse(pathString).fsPath)
+        }
         isUrl = isHttp || isFile
       }
 
       if (isUrl)
-        return // Already handled as a URL
+        return
 
-      // Not a valid URL, treat as a potential file path
-      if (isAbsolute(pathString))
+      // Handle file paths (relative or absolute)
+      if (isAbsolute(pathString)) {
         localFilePaths.push(pathString)
-      else if (workspaceFolders.value)
+      }
+      else if (workspaceFolders.value) {
+        // Resolve relative paths against all workspace folders
         workspaceFolders.value.forEach(folder => localFilePaths.push(resolve(folder.uri.fsPath, pathString)))
+      }
     })
 
     const uniqueLocalPaths = Array.from(new Set(localFilePaths))
@@ -90,13 +103,12 @@ export async function useCustomCollections() {
     try {
       if (isRemote) {
         collectionData = await fetchJSONFromURL(pathOrUrl)
-        // keyForMap is already pathOrUrl
       }
-      else { // Local file path
+      else {
         const fileUri = Uri.file(pathOrUrl)
-        // Use URL.canParse for consistency in map keys
+        // Generate consistent file:// URL key for map storage
         keyForMap = URL.canParse(fileUri.toString()) ? new URL(fileUri.toString()).href : fileUri.toString()
-        collectionData = await readJSON(fileUri.fsPath) // readJSON expects a path string
+        collectionData = await readJSON(fileUri.fsPath)
       }
 
       if (collectionData) {
@@ -105,13 +117,12 @@ export async function useCustomCollections() {
         deleteTask(collectionData.prefix)
       }
       else {
-        // Error already logged by fetchJSONFromURL or readJSON might throw (or return null like fetchJSONFromURL)
         Log.warn(`No data loaded for ${pathOrUrl}. It might have been logged by the fetch/read utility.`)
       }
     }
     catch (error: any) {
       Log.error(`Error processing custom collection from ${pathOrUrl}: ${error.message || error}`)
-      // Ensure removal from map if loading fails to prevent stale data
+      // Clean up stale data on load failure
       if (result.has(keyForMap))
         result.delete(keyForMap)
     }
@@ -122,6 +133,7 @@ export async function useCustomCollections() {
     localIconifyJsonPaths.value.forEach(p => load(p, false))
   })
 
+  // File system watchers for hot-reload
   onDidChange(uri => load(uri.fsPath, false))
   onDidCreate(uri => load(uri.fsPath, false))
   onDidDelete((uri) => {
@@ -133,18 +145,20 @@ export async function useCustomCollections() {
     }
   })
 
-  // Watch for changes in remote URLs and load/unload them
+  /**
+   * Reactive management of remote URLs - load new ones, unload removed ones
+   */
   watchEffect(() => {
     const currentRemoteUrls = remoteIconifyJsonUrls.value
     const existingRemoteKeys = Array.from(result.keys()).filter(k => k.startsWith('http'))
 
     // Load new remote URLs
     for (const url of currentRemoteUrls) {
-      if (!result.has(url)) // Check if not already loaded or being loaded
+      if (!result.has(url))
         load(url, true)
     }
 
-    // Remove old remote URLs
+    // Remove URLs no longer in config
     for (const key of existingRemoteKeys) {
       if (!currentRemoteUrls.includes(key)) {
         result.delete(key)
