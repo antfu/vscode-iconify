@@ -2,7 +2,7 @@
   "publisher": "antfu",
   "name": "iconify",
   "displayName": "Iconify IntelliSense",
-  "type": "commonjs",
+  "type": "module",
   "version": "0.10.5",
   "private": true,
   "packageManager": "pnpm@10.12.1",
@@ -670,7 +670,7 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --external vscode",
+    "build": "tsdown src/index.ts --external vscode",
     "dev": "nr build --watch",
     "lint": "eslint .",
     "vscode:prepublish": "nr build",
@@ -697,6 +697,7 @@
     "ofetch": "^1.4.1",
     "reactive-vscode": "^0.2.19",
     "strip-json-comments": "^5.0.2",
+    "tsdown": "^0.12.7",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "vscode-ext-gen": "^1.0.2"
