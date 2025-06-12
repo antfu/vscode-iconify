@@ -677,12 +677,13 @@
     "publish": "vsce publish --no-dependencies",
     "pack": "vsce package --no-dependencies",
     "typecheck": "tsc --noEmit",
-    "prepare": "esno scripts/prepare.ts && pnpm run update",
+    "prepare": "tsx scripts/prepare.ts && pnpm run update",
     "update": "vscode-ext-gen --output src/generated/meta.ts",
     "release": "bumpp && nr publish"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.14.1",
+    "@antfu/ni": "^25.0.0",
     "@antfu/utils": "^9.2.0",
     "@iconify/json": "^2.2.347",
     "@iconify/types": "^2.0.0",
@@ -692,13 +693,12 @@
     "@vscode/vsce": "^3.5.0",
     "bumpp": "^10.1.1",
     "eslint": "^9.28.0",
-    "esno": "^4.8.0",
     "fs-extra": "^11.3.0",
     "ofetch": "^1.4.1",
     "reactive-vscode": "^0.2.19",
     "strip-json-comments": "^5.0.2",
     "tsdown": "^0.12.7",
-    "tsup": "^8.5.0",
+    "tsx": "^4.20.1",
     "typescript": "^5.8.3",
     "vscode-ext-gen": "^1.0.2"
   }
