@@ -1,7 +1,9 @@
 name: Release
 
 permissions:
+  id-token: write
   contents: write
+  actions: write
 
 on:
   push:
@@ -23,5 +25,18 @@ jobs:
       - run: npm i -g @antfu/ni
       - run: pnpm install
       - run: npx changelogithub
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Generate .vsix file
+        run: pnpm package
+      - name: Upload .vsix to Release
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          ASSET_NAME="iconify-${VERSION}.vsix"
+
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          REPO="${{ github.repository }}"
+
+          gh release upload "$TAG_NAME" "./${ASSET_NAME}" --repo "$REPO" --clobber
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
