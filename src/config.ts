@@ -8,6 +8,7 @@ import { collectionIds, collections } from './collections'
 import * as Meta from './generated/meta'
 import { deleteTask } from './loader'
 import { Log, readJSON } from './utils'
+import { fetchJSONFromURL } from './utils/network'
 
 export const config = defineConfigObject<Meta.NestedScopedConfigs>(
   Meta.scopedConfigs.scope,
@@ -32,50 +33,139 @@ export const customCollections = shallowRef([] as IconifyJSON[])
 export async function useCustomCollections() {
   const workspaceFolders = useWorkspaceFolders()
 
-  /** key is URL.href */
+  /**
+   * Map using URL.href as keys for unified handling of local/remote collections
+   */
   const result = shallowReactive(new Map<string, IconifyJSON>())
-  const iconifyJsonPaths = computed(() => {
-    const files = Array.from(
-      new Set(config.customCollectionJsonPaths.flatMap((file: string) => {
-        if (isAbsolute(file))
-          return [file]
 
-        const list: string[] = []
-        if (workspaceFolders.value) {
-          for (const folder of workspaceFolders.value)
-            list.push(resolve(folder.uri.fsPath, file))
+  /**
+   * Separate local files from remote URLs for different loading/watching strategies
+   */
+  const processedPaths = computed(() => {
+    const localFilePaths: string[] = []
+    const remoteUrlStrings: string[] = []
+
+    config.customCollectionJsonPaths.forEach((pathString: string) => {
+      let isUrl = false
+
+      // Parse URLs to detect remote collections and file:// URLs
+      if (URL.canParse(pathString)) {
+        const url = new URL(pathString)
+        const isHttp = url.protocol === 'http:' || url.protocol === 'https:'
+        const isFile = url.protocol === 'file:'
+
+        if (isHttp) {
+          remoteUrlStrings.push(pathString)
         }
-        return list
-      })),
-    )
+        else if (isFile) {
+          localFilePaths.push(Uri.parse(pathString).fsPath)
+        }
+        isUrl = isHttp || isFile
+      }
 
-    return files.filter((file) => {
+      if (isUrl)
+        return
+
+      // Handle file paths (relative or absolute)
+      if (isAbsolute(pathString)) {
+        localFilePaths.push(pathString)
+      }
+      else if (workspaceFolders.value) {
+        // Resolve relative paths against all workspace folders
+        workspaceFolders.value.forEach(folder => localFilePaths.push(resolve(folder.uri.fsPath, pathString)))
+      }
+    })
+
+    const uniqueLocalPaths = Array.from(new Set(localFilePaths))
+    const existingLocalPaths = uniqueLocalPaths.filter((file) => {
       const exists = fs.existsSync(file)
       if (!exists)
         Log.warn(`Custom collection file does not exist: ${file}`)
       return exists
     })
-  })
-  const { onDidChange, onDidDelete, onDidCreate } = useFsWatcher(iconifyJsonPaths)
 
-  async function load(url: URL) {
-    Log.info(`Loading custom collections from:\n${url}`)
-    try {
-      const val: IconifyJSON = await readJSON(url)
-      result.set(url.href, val)
-      deleteTask(val.prefix)
+    return {
+      local: existingLocalPaths,
+      remote: Array.from(new Set(remoteUrlStrings)),
     }
-    catch {
-      Log.error(`Error on loading custom collection: ${url}`)
+  })
+
+  const localIconifyJsonPaths = computed(() => processedPaths.value.local)
+  const remoteIconifyJsonUrls = computed(() => processedPaths.value.remote)
+
+  const { onDidChange, onDidDelete, onDidCreate } = useFsWatcher(localIconifyJsonPaths)
+
+  async function load(pathOrUrl: string, isRemote: boolean) {
+    Log.info(`Loading custom collections from:\n${pathOrUrl}`)
+    let collectionData: IconifyJSON | null = null
+    let keyForMap: string = pathOrUrl
+
+    try {
+      if (isRemote) {
+        collectionData = await fetchJSONFromURL(pathOrUrl)
+      }
+      else {
+        const fileUri = Uri.file(pathOrUrl)
+        // Generate consistent file:// URL key for map storage
+        keyForMap = URL.canParse(fileUri.toString()) ? new URL(fileUri.toString()).href : fileUri.toString()
+        collectionData = await readJSON(fileUri.fsPath)
+      }
+
+      if (collectionData) {
+        Log.info(`Successfully loaded custom collection: ${collectionData.prefix} from ${pathOrUrl}`)
+        result.set(keyForMap, collectionData)
+        deleteTask(collectionData.prefix)
+      }
+      else {
+        Log.warn(`No data loaded for ${pathOrUrl}. It might have been logged by the fetch/read utility.`)
+      }
+    }
+    catch (error: any) {
+      Log.error(`Error processing custom collection from ${pathOrUrl}: ${error.message || error}`)
+      // Clean up stale data on load failure
+      if (result.has(keyForMap))
+        result.delete(keyForMap)
     }
   }
 
-  // Initial load
-  iconifyJsonPaths.value.forEach(p => load(new URL(Uri.file(p))))
+  // Initial load for local files
+  watchEffect(() => {
+    localIconifyJsonPaths.value.forEach(p => load(p, false))
+  })
 
-  onDidChange(uri => load(new URL(uri)))
-  onDidCreate(uri => load(new URL(uri)))
-  onDidDelete(uri => result.delete(new URL(uri).href))
+  // File system watchers for hot-reload
+  onDidChange(uri => load(uri.fsPath, false))
+  onDidCreate(uri => load(uri.fsPath, false))
+  onDidDelete((uri) => {
+    const fileUri = Uri.file(uri.fsPath)
+    const key = URL.canParse(fileUri.toString()) ? new URL(fileUri.toString()).href : fileUri.toString()
+    if (result.has(key)) {
+      result.delete(key)
+      Log.info(`Removed custom collection from deleted file: ${uri.fsPath}`)
+    }
+  })
+
+  /**
+   * Reactive management of remote URLs - load new ones, unload removed ones
+   */
+  watchEffect(() => {
+    const currentRemoteUrls = remoteIconifyJsonUrls.value
+    const existingRemoteKeys = Array.from(result.keys()).filter(k => k.startsWith('http'))
+
+    // Load new remote URLs
+    for (const url of currentRemoteUrls) {
+      if (!result.has(url))
+        load(url, true)
+    }
+
+    // Remove URLs no longer in config
+    for (const key of existingRemoteKeys) {
+      if (!currentRemoteUrls.includes(key)) {
+        result.delete(key)
+        Log.info(`Unloaded remote custom collection: ${key}`)
+      }
+    }
+  })
 
   watchEffect(() => customCollections.value = Array.from(result.values()))
 }

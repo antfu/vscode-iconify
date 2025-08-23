@@ -27,6 +27,21 @@
 - Hover
 - Snippets
 
+### Remote Collections
+
+Load custom icon collections from remote URLs:
+
+```json
+{
+  "iconify.customCollectionJsonPaths": [
+    "https://example.com/my-icons.json",
+    "./local/icons.json"
+  ]
+}
+```
+
+Remote collections are automatically reloaded when the configuration changes and support hot-reloading without restarting VS Code.
+
 ## License
 
 MIT License © 2020 [Anthony Fu](https://github.com/antfu)
