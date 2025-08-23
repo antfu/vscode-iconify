@@ -704,7 +704,7 @@
     "fs-extra": "^11.3.1",
     "ofetch": "^1.4.1",
     "ovsx": "^0.10.5",
-    "reactive-vscode": "0.2.9",
+    "reactive-vscode": "^0.3.1",
     "strip-json-comments": "^5.0.3",
     "tsdown": "^0.14.1",
     "tsx": "^4.20.4",
