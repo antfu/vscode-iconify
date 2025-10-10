@@ -45,6 +45,8 @@
     "onLanguage:javascriptreact",
     "onLanguage:typescript",
     "onLanguage:typescriptreact",
+    "onLanguage:glimmer-js",
+    "onLanguage:glimmer-ts",
     "onLanguage:handlebars",
     "onLanguage:svelte",
     "onLanguage:html",
