@@ -159,6 +159,8 @@
             "typescriptreact",
             "vue",
             "svelte",
+            "glimmer-js",
+            "glimmer-ts",
             "html",
             "pug",
             "json",
