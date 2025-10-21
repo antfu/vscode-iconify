@@ -1,5 +1,5 @@
-import type { PathLike } from 'fs-extra'
-import fs from 'fs-extra'
+import type { PathLike } from 'node:fs'
+import fs from 'node:fs/promises'
 import stripJsonComments from 'strip-json-comments'
 
 /**

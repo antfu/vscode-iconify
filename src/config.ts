@@ -1,7 +1,7 @@
 import type { IconifyJSON } from '@iconify/types'
 import type { IconsetMeta } from './collections'
+import fs from 'node:fs'
 import { isAbsolute, resolve } from 'node:path'
-import fs from 'fs-extra'
 import { computed, defineConfigObject, ref, shallowReactive, shallowRef, useFsWatcher, useIsDarkTheme, useWorkspaceFolders, watchEffect } from 'reactive-vscode'
 import { Uri } from 'vscode'
 import { collectionIds, collections } from './collections'
