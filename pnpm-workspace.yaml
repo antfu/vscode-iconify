@@ -3,4 +3,3 @@ onlyBuiltDependencies:
   - esbuild
   - keytar
   - unrs-resolver
-  - vsxpub
