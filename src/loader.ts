@@ -1,4 +1,4 @@
-import type { IconifyIcon, IconifyJSON } from '@iconify/types'
+import type { IconifyAlias, IconifyIcon, IconifyJSON } from '@iconify/types'
 import { Buffer } from 'node:buffer'
 import { $fetch } from 'ofetch'
 import { extensionContext } from 'reactive-vscode'
@@ -120,6 +120,81 @@ export interface IconInfo extends IconifyIcon {
   id: string
 }
 
+function normalizeIcon(icon: IconifyIcon, data: IconifyJSON): IconifyIcon {
+  const normalized: IconifyIcon = { ...icon }
+
+  normalized.left = normalized.left ?? data.left ?? 0
+  normalized.top = normalized.top ?? data.top ?? 0
+  normalized.width = normalized.width ?? data.width ?? 16
+  normalized.height = normalized.height ?? data.height ?? 16
+
+  if (normalized.rotate)
+    normalized.rotate = normalized.rotate % 4
+
+  return normalized
+}
+
+function mergeAlias(parent: IconifyIcon, alias: IconifyAlias): IconifyIcon {
+  const merged: IconifyIcon = { ...parent }
+
+  if (alias.left != null)
+    merged.left = alias.left
+  if (alias.top != null)
+    merged.top = alias.top
+  if (alias.width != null)
+    merged.width = alias.width
+  if (alias.height != null)
+    merged.height = alias.height
+
+  const parentRotate = parent.rotate ?? 0
+  const aliasRotate = alias.rotate ?? 0
+  const rotate = (parentRotate + aliasRotate) % 4
+  if (rotate)
+    merged.rotate = rotate
+  else
+    delete merged.rotate
+
+  const hFlip = parent.hFlip !== alias.hFlip
+  if (hFlip)
+    merged.hFlip = true
+  else
+    delete merged.hFlip
+
+  const vFlip = parent.vFlip !== alias.vFlip
+  if (vFlip)
+    merged.vFlip = true
+  else
+    delete merged.vFlip
+
+  return merged
+}
+
+function resolveIconData(data: IconifyJSON, name: string): IconifyIcon | null {
+  const visited = new Set<string>()
+
+  const resolve = (key: string): IconifyIcon | null => {
+    if (visited.has(key))
+      return null
+    visited.add(key)
+
+    const icon = data.icons?.[key]
+    if (icon)
+      return normalizeIcon(icon, data)
+
+    const alias = data.aliases?.[key]
+    if (!alias)
+      return null
+
+    const parent = resolve(alias.parent)
+    if (!parent)
+      return null
+
+    return normalizeIcon(mergeAlias(parent, alias), data)
+  }
+
+  return resolve(name)
+}
+
 export async function getIconInfo(key: string, allowAliases = true) {
   const alias = allowAliases ? enabledAliases.value[key] : undefined
   if (allowAliases && config.customAliasesOnly && !alias)
@@ -132,20 +207,25 @@ export async function getIconInfo(key: string, allowAliases = true) {
     return
 
   const data = await LoadIconSet(result.collection)
-  const icon = data?.icons?.[result.icon] as IconInfo
-  if (!data || !icon)
+  if (!data)
     return null
 
-  if (!icon.width)
-    icon.width = data.width || 16
+  const iconData = resolveIconData(data, result.icon)
+  if (!iconData)
+    return null
 
-  if (!icon.height)
-    icon.height = data.height || 16
+  const width = iconData.width ?? data.width ?? 16
+  const height = iconData.height ?? data.height ?? 16
 
-  icon.collection = result.collection
-  icon.id = result.icon
-  icon.key = actualKey
-  icon.ratio = (data.width! / data.height!) || 1
+  const icon: IconInfo = {
+    ...iconData,
+    width,
+    height,
+    collection: result.collection,
+    id: result.icon,
+    key: actualKey,
+    ratio: (width / height) || 1,
+  }
 
   return icon
 }

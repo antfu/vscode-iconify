@@ -231,13 +231,19 @@ export const enabledCollectionIds = computed(() => {
 })
 
 export const enabledCollections = computed<IconsetMeta[]>(() => {
-  const customData: IconsetMeta[] = customCollections.value.map(c => ({
-    id: c.prefix,
-    name: c.info?.name,
-    author: c.info?.author.name,
-    icons: Object.keys(c.icons),
-    height: c.info?.height,
-  }))
+  const customData: IconsetMeta[] = customCollections.value.map((c) => {
+    const icons = Object.keys(c.icons)
+    const aliases = Object.keys(c.aliases ?? {})
+    const allIcons = [...new Set([...icons, ...aliases])]
+
+    return {
+      id: c.prefix,
+      name: c.info?.name,
+      author: c.info?.author.name,
+      icons: allIcons,
+      height: c.info?.height,
+    }
+  })
   return [...collections, ...customData]
 })
 
