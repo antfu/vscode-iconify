@@ -227,7 +227,8 @@ export const enabledCollectionIds = computed(() => {
     ...customCollections.value.map(c => c.prefix),
   ]
   collections.sort((a, b) => b.length - a.length)
-  return collections
+  // dedupe ids shared by custom and built-in collections
+  return Array.from(new Set(collections))
 })
 
 export const enabledCollections = computed<IconsetMeta[]>(() => {
@@ -238,7 +239,9 @@ export const enabledCollections = computed<IconsetMeta[]>(() => {
     icons: Object.keys(c.icons),
     height: c.info?.height,
   }))
-  return [...collections, ...customData]
+  // Custom collections override built-in ones with the same prefix (e.g. `weui`)
+  const customIds = new Set(customData.map(c => c.id))
+  return [...customData, ...collections.filter(c => !customIds.has(c.id))]
 })
 
 export const enabledAliases = computed((): Record<string, string> => {
@@ -285,7 +288,8 @@ export const REGEX_PREFIXED = computed(() => {
 })
 
 export const REGEX_NAMESPACE = computed(() => {
-  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}[\\w-]*$`)
+  // capture the partial icon name after the delimiter (group 3)
+  return new RegExp(`[^\\w\\d]${RE_PART_PREFIXES.value}(${enabledCollectionIds.value.join('|')})${RE_PART_DELIMITERS.value}([\\w-]*)$`)
 })
 
 export const REGEX_COLLECTION_ICON = computed(() => {
